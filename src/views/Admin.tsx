@@ -37,16 +37,52 @@ export const Admin = ({
     setCardExpiry('');
   };
 
-  const handleSaveProduct = (e: React.FormEvent) => {
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prodTitle) return;
     
+    // Import supabase dynamically since we are not importing it at top level yet
+    const { supabase } = await import('../lib/supabase');
+
     if (editingId) {
+       // Update in Supabase
+       const { error } = await supabase
+         .from('products')
+         .update({ 
+           title: prodTitle, 
+           price: parseFloat(prodPrice), 
+           image_url: imgUrl 
+         })
+         .eq('id', editingId);
+
+       if (error) {
+         alert("Error updating product: " + error.message);
+         return;
+       }
+
+       // Update local state
        setProducts(products.map((p: any) => p.id === editingId ? { ...p, title: prodTitle, price: parseFloat(prodPrice), imageUrl: imgUrl } : p));
     } else {
+       // Insert into Supabase
+       const { data, error } = await supabase
+         .from('products')
+         .insert({ 
+           title: prodTitle, 
+           price: parseFloat(prodPrice), 
+           image_url: imgUrl 
+         })
+         .select()
+         .single();
+
+       if (error) {
+         alert("Error creating product: " + error.message);
+         return;
+       }
+
+       // Update local state
        setProducts([
-         ...products,
-         { id: Date.now().toString(), title: prodTitle, price: parseFloat(prodPrice), imageUrl: imgUrl }
+         { id: data.id, title: data.title, price: Number(data.price), imageUrl: data.image_url, category: data.category },
+         ...products
        ]);
     }
     
@@ -54,10 +90,11 @@ export const Admin = ({
   };
 
   const openWizard = (product?: any) => {
-     if (product) {
+     // product could be an event if clicked carelessly, so check for string id
+     if (product && typeof product === 'object' && 'id' in product) {
        setEditingId(product.id);
        setProdTitle(product.title);
-       setProdPrice(product.price.toString());
+       setProdPrice(product.price ? product.price.toString() : '0');
        setImgUrl(product.imageUrl || '');
      } else {
        setEditingId(null);
@@ -68,8 +105,20 @@ export const Admin = ({
      setWizardOpen(true);
   };
 
-  const deleteProduct = (id: string, e: React.MouseEvent) => {
+  const deleteProduct = async (id: string, e: React.MouseEvent) => {
      e.stopPropagation();
+     
+     const { supabase } = await import('../lib/supabase');
+     const { error } = await supabase
+       .from('products')
+       .delete()
+       .eq('id', id);
+
+     if (error) {
+       alert("Error deleting product: " + error.message);
+       return;
+     }
+
      setProducts(products.filter((p: any) => p.id !== id));
   }
 

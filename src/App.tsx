@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home } from './views/Home';
 import { Search } from './views/Search';
 import { Basket } from './views/Basket';
@@ -45,38 +45,39 @@ export default function App() {
      { id: '1', brand: 'Visa', last4: '4242', expiry: '12/26' },
      { id: '2', brand: 'Mastercard', last4: '8811', expiry: '09/25' }
   ]);
-  const [products, setProducts] = useState([
-     { id: '1', title: 'Apple iPhone 15 Pro, 256GB, Natural Titanium', price: 1199.00, imageUrl: 'https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg' },
-     { id: '2', title: 'Mechanical Gaming Keyboard with RGB LED Backlit', price: 45.99, imageUrl: 'https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg' },
-     { id: '3', title: 'Adjustable Dumbbells Set for Home Gym', price: 199.99, imageUrl: 'https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg' },
-     { id: '4', title: 'One Piece Swimsuit for Women', price: 29.99, imageUrl: 'https://m.media-amazon.com/images/I/81fH+uVp-cL._AC_SX679_.jpg' },
-     { id: '5', title: 'SmallRig Camera Cage setup', price: 89.00, imageUrl: 'https://m.media-amazon.com/images/I/61mQd0T0BTL._AC_SX679_.jpg' },
-     { id: '6', title: 'Amazon Echo Dot (5th Gen) | Smart speaker with Alexa', price: 49.99, imageUrl: 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SX679_.jpg' },
-     { id: '7', title: 'Voluminous Makeup Lash Paradise Mascara', price: 8.98, imageUrl: 'https://m.media-amazon.com/images/I/61aK0bW0s8L._AC_SX679_.jpg' },
-     { id: '8', title: 'Sony WH-1000XM5 Wireless Noise Canceling Headphones', price: 348.00, imageUrl: 'https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg' },
-     { id: '9', title: 'MacBook Air M2 Chip 13.6-inch Liquid Retina Display', price: 1099.00, imageUrl: 'https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg' },
-     { id: '10', title: 'Canon EOS Rebel T7 DSLR Camera with 18-55mm Lens', price: 479.00, imageUrl: 'https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg' },
-     { id: '11', title: 'Logitech G PRO X Superlight Wireless Gaming Mouse', price: 129.99, imageUrl: 'https://m.media-amazon.com/images/I/81fH+uVp-cL._AC_SX679_.jpg' },
-     { id: '12', title: 'Keurig K-Classic Coffee Maker, Single Serve', price: 99.99, imageUrl: 'https://m.media-amazon.com/images/I/61mQd0T0BTL._AC_SX679_.jpg' },
-     { id: '13', title: 'Dyson V11 Cordless Stick Vacuum Cleaner', price: 499.00, imageUrl: 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SX679_.jpg' },
-     { id: '14', title: 'Apple Watch Series 9 GPS 45mm', price: 399.00, imageUrl: 'https://m.media-amazon.com/images/I/61aK0bW0s8L._AC_SX679_.jpg' },
-     { id: '15', title: 'Bose SoundLink Micro Bluetooth Speaker', price: 99.00, imageUrl: 'https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg' },
-     { id: '16', title: 'KitchenAid Artisan Series 5-Qt. Stand Mixer', price: 379.99, imageUrl: 'https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg' },
-     { id: '17', title: 'Nike Men\'s Revolution 5 Running Shoe', price: 55.00, imageUrl: 'https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg' },
-     { id: '18', title: 'LG 27" Ultragear QHD (2560x1440) Gaming Monitor', price: 299.99, imageUrl: 'https://m.media-amazon.com/images/I/81fH+uVp-cL._AC_SX679_.jpg' },
-     { id: '19', title: 'Nintendo Switch - OLED Model', price: 349.99, imageUrl: 'https://m.media-amazon.com/images/I/61mQd0T0BTL._AC_SX679_.jpg' },
-     { id: '20', title: 'Hydro Flask Standard Mouth Bottle with Flex Cap', price: 34.95, imageUrl: 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SX679_.jpg' },
-     { id: '21', title: 'PlayStation 5 Console (Disc Edition)', price: 499.99, imageUrl: 'https://m.media-amazon.com/images/I/61aK0bW0s8L._AC_SX679_.jpg' },
-     { id: '22', title: 'Instant Pot Duo 7-in-1 Electric Pressure Cooker', price: 99.99, imageUrl: 'https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg' },
-     { id: '23', title: 'YETI Rambler 20 oz Tumbler', price: 35.00, imageUrl: 'https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg' },
-     { id: '24', title: 'Ninja AF101 Air Fryer', price: 89.95, imageUrl: 'https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg' },
-     { id: '25', title: 'Ring Video Doorbell, 1080p HD video', price: 99.99, imageUrl: 'https://m.media-amazon.com/images/I/81fH+uVp-cL._AC_SX679_.jpg' },
-     { id: '26', title: 'Oculus Quest 2 — Advanced All-In-One Virtual Reality', price: 299.00, imageUrl: 'https://m.media-amazon.com/images/I/61mQd0T0BTL._AC_SX679_.jpg' },
-     { id: '27', title: 'CeraVe Moisturizing Cream', price: 17.78, imageUrl: 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SX679_.jpg' },
-     { id: '28', title: 'LEGO Star Wars Millennium Falcon 75257', price: 159.99, imageUrl: 'https://m.media-amazon.com/images/I/61aK0bW0s8L._AC_SX679_.jpg' },
-     { id: '29', title: 'Kindle Paperwhite (8 GB) – Now with a 6.8" display', price: 139.99, imageUrl: 'https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg' },
-     { id: '30', title: 'Cards Against Humanity: Core Game', price: 29.00, imageUrl: 'https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg' },
-  ]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProducts() {
+      import('./lib/supabase').then(async ({ supabase }) => {
+        const { data } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (data && data.length > 0) {
+          setProducts(data.map(p => ({
+            id: p.id,
+            title: p.title,
+            price: Number(p.price),
+            imageUrl: p.image_url,
+            category: p.category
+          })));
+        } else {
+           // fallback to at least some data if empty
+           setProducts([
+             { id: '1', title: 'Apple iPhone 15 Pro, 256GB, Natural Titanium', price: 1199.00, imageUrl: 'https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg' },
+             { id: '2', title: 'Mechanical Gaming Keyboard with RGB LED Backlit', price: 45.99, imageUrl: 'https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg' },
+             { id: '3', title: 'Adjustable Dumbbells Set for Home Gym', price: 199.99, imageUrl: 'https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg' },
+             { id: '4', title: 'One Piece Swimsuit for Women', price: 29.99, imageUrl: 'https://m.media-amazon.com/images/I/81fH+uVp-cL._AC_SX679_.jpg' }
+           ]);
+        }
+        setProductsLoading(false);
+      });
+    }
+    loadProducts();
+  }, []);
 
   const [homepageImages, setHomepageImages] = useState({
      hero: 'https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg',

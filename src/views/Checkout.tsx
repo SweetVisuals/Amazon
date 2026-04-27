@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowLeftIcon } from '../components/Icons';
 import { Trash2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
 
 export const Checkout = ({ 
    onBack, 
@@ -16,13 +18,53 @@ export const Checkout = ({
    deliveryInfo?: any
 }) => {
   const [loading, setLoading] = useState(false);
+  const { user, signIn } = useAuth();
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
+    if (!user) {
+      alert("Please login first to place order.");
+      signIn();
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
+    
+    // Insert order
+    const totalAmount = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const { data: orderData, error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        user_id: user.id,
+        total_amount: totalAmount,
+        status: 'PENDING',
+        delivery_address: deliveryInfo || { name: 'Default Delivery' },
+      })
+      .select()
+      .single();
+
+    if (orderError) {
+      alert("Error placing order: " + orderError.message);
       setLoading(false);
-      onComplete();
-    }, 1500);
+      return;
+    }
+
+    // Insert order items
+    const itemsToInsert = cartItems.map(item => ({
+      order_id: orderData.id,
+      product_id: item.id,
+      quantity: item.quantity,
+      price_at_purchase: item.price,
+      title: item.title,
+      image_url: item.imageUrl
+    }));
+
+    const { error: itemsError } = await supabase.from('order_items').insert(itemsToInsert);
+
+    if (itemsError) {
+       console.error("Error inserting items:", itemsError);
+    }
+
+    setLoading(false);
+    onComplete(); // clears cart and navigates and shows success
   };
 
   const defaultCard = savedCards && savedCards.length > 0 ? savedCards[0] : { brand: 'Visa', last4: '9906' };

@@ -1,7 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SearchIcon, ShoppingCart, Menu, ChevronRight, Camera, Mic, ArrowLeft } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
 export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any) => void, onBack: () => void }) => {
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    setLoading(true);
+
+    const fetchOrders = async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items (*)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (data) {
+        setOrders(data);
+      }
+      if (error) {
+         console.error(error);
+      }
+      setLoading(false);
+    };
+
+    fetchOrders();
+  }, [user]);
+
   return (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto pb-10">
       {/* Header (amazon search bar style) */}
@@ -71,58 +102,42 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any) => void, o
       {/* Purchase history */}
       <div className="bg-white px-4 py-4 flex flex-col gap-3">
          <h2 className="text-[20px] font-bold text-[#0f1111]">Purchase history</h2>
-         <div className="text-[14px] text-gray-600 mb-2">Past three months</div>
-
-         {/* Item 1 */}
-         <div className="border border-gray-300 rounded-[8px] p-4 flex gap-4 cursor-pointer" onClick={() => onNavigate('tracking')}>
-             <div className="w-[80px] shrink-0 flex items-center justify-center">
-                 <img src="https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SY200_.jpg" className="w-[80px] h-[80px] object-contain mix-blend-multiply" />
-             </div>
-             <div className="flex-1 flex flex-col justify-center">
-                <h3 className="font-bold text-[16px] text-[#0f1111] mb-1">Delivered 24 April</h3>
-                <p className="text-[14px] text-gray-800 leading-snug">
-                   Your package was left near the front door or porch.
-                </p>
-             </div>
-         </div>
-
-         {/* Item 2 */}
-         <div className="border border-gray-300 rounded-[8px] p-4 flex gap-4">
-             <div className="w-[80px] shrink-0 flex items-center justify-center">
-                 <img src="https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SY200_.jpg" className="w-[80px] h-[80px] object-contain mix-blend-multiply opacity-60" />
-             </div>
-             <div className="flex-1 flex flex-col justify-center">
-                <h3 className="font-bold text-[16px] text-[#0f1111] mb-1">Cancelled</h3>
-                <p className="text-[14px] text-gray-800 leading-snug">
-                   Your order was cancelled. You have not been charged for this order.
-                </p>
-             </div>
-         </div>
-
-         {/* Item 3 */}
-         <div className="border border-gray-300 rounded-[8px] p-4 flex gap-4">
-             <div className="w-[80px] shrink-0 flex items-center justify-center">
-                 <img src="https://m.media-amazon.com/images/I/61aK0bW0s8L._AC_SX679_.jpg" className="w-[80px] h-[80px] object-contain mix-blend-multiply" />
-             </div>
-             <div className="flex-1 flex flex-col justify-center">
-                <h3 className="font-bold text-[16px] text-[#0f1111] mb-1">grace & stella Award Winning Under Ey...</h3>
-                <p className="text-[14px] text-gray-800 leading-snug mt-1">
-                   Delivered 2 April
-                </p>
-             </div>
-         </div>
          
-         <div className="border border-gray-300 rounded-[8px] p-4 flex gap-4 mt-2">
-             <div className="w-[80px] shrink-0 flex items-center justify-center">
-                 <img src="https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg" className="w-[80px] h-[80px] object-contain mix-blend-multiply" />
-             </div>
-             <div className="flex-1 flex flex-col justify-center">
-                <h3 className="font-bold text-[16px] text-[#0f1111] mb-1">Mechanical Gaming Keyboard with RGB...</h3>
-                <p className="text-[14px] text-gray-800 leading-snug mt-1">
-                   Delivered 15 March
-                </p>
-             </div>
-         </div>
+         {!user && (
+            <div className="text-[14px] text-gray-600 mb-2">Please log in to see your orders.</div>
+         )}
+         
+         {user && loading && (
+            <div className="text-[14px] text-gray-600 mb-2">Loading orders...</div>
+         )}
+
+         {user && !loading && orders.length === 0 && (
+            <div className="text-[14px] text-gray-600 mb-2">You have no orders yet.</div>
+         )}
+
+         {orders.map((order, index) => {
+            const firstItem = order.order_items?.[0] || {};
+            const itemTitle = firstItem.title || 'Unknown Item';
+            const imageUrl = firstItem.image_url || 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SY200_.jpg';
+            const date = new Date(order.created_at).toLocaleDateString();
+
+            return (
+               <div key={order.id} className="border border-gray-300 rounded-[8px] p-4 flex gap-4 cursor-pointer" onClick={() => onNavigate('tracking')}>
+                 <div className="w-[80px] shrink-0 flex items-center justify-center">
+                     <img src={imageUrl} className="w-[80px] h-[80px] object-contain mix-blend-multiply" alt="product" />
+                 </div>
+                 <div className="flex-1 flex flex-col justify-center">
+                    <h3 className="font-bold text-[16px] text-[#0f1111] mb-1">{order.status === 'PENDING' ? 'Processing' : order.status}</h3>
+                    <p className="text-[14px] text-gray-800 leading-snug line-clamp-2">
+                       {itemTitle}
+                    </p>
+                    <p className="text-[13px] text-gray-500 mt-1">
+                       Placed on {date}
+                    </p>
+                 </div>
+               </div>
+            );
+         })}
       </div>
     </div>
   )

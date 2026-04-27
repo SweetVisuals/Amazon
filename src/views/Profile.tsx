@@ -1,7 +1,9 @@
 import React from 'react';
 import { SearchIcon, CameraIcon, MicIcon, ChevronRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Profile = ({ onNavigate }: { onNavigate: (view: any) => void }) => {
+  const { user, signIn, signOut } = useAuth();
   const items = [
      { label: 'Admin Dashboard', onClick: () => onNavigate('admin') },
      { label: 'Profile', onClick: () => {} },
@@ -29,7 +31,20 @@ export const Profile = ({ onNavigate }: { onNavigate: (view: any) => void }) => 
       </div>
 
       <div className="p-4 bg-white min-h-screen">
-         <h2 className="text-[18px] font-bold text-[#0f1111] mb-2">Personalized content</h2>
+         <h2 className="text-[18px] font-bold text-[#0f1111] mb-2">
+            Personalized content {user ? `for ${user.email}` : ''}
+         </h2>
+         <div className="mb-4">
+           {user ? (
+              <button onClick={signOut} className="bg-gray-200 px-4 py-2 rounded font-bold w-full text-center">
+                Sign out
+              </button>
+           ) : (
+              <button onClick={signIn} className="bg-[#ffd814] px-4 py-2 rounded font-bold w-full text-center">
+                Sign in
+              </button>
+           )}
+         </div>
          <div className="border border-gray-300 rounded-[8px] bg-white overflow-hidden shadow-sm">
             {items.map((item, idx) => (
                <div 
