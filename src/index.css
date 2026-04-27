@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+.amazon-header-bg {
+  background-image: 
+    linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.05) 100%),
+    repeating-linear-gradient(to right, rgba(200, 150, 50, 0.2) 0px, rgba(200, 150, 50, 0.2) 1px, transparent 1px, transparent 4px),
+    linear-gradient(to right, #f6d177, #f2c86b);
+}
+
+.amazon-teal-bg {
+  background-image: linear-gradient(to right, #83e8da, #c6f5ec);
+}
+
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Amazon Clone",
+  "description": "Exact UI recreation of the Amazon mobile app with Home, Search, Basket, and Checkout flows.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
