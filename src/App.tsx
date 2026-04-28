@@ -22,6 +22,7 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleProductClick = (product: any) => {
     setSelectedProduct(product);
@@ -167,7 +168,7 @@ export default function App() {
 
   const renderContent = () => {
     if (currentView === 'search') {
-      return <Search onBack={() => setCurrentView('main')} products={products} onProductClick={handleProductClick} />;
+      return <Search onBack={() => { setCurrentView('main'); setSearchQuery(''); }} products={products} onProductClick={handleProductClick} initialQuery={searchQuery} />;
     }
     
     if (currentView === 'checkout') {
@@ -215,10 +216,10 @@ export default function App() {
 
     // Main views based on activeTab
     if (activeTab === 'home') {
-      return <Home onSearchClick={() => setCurrentView('search')} products={products} onProductClick={handleProductClick} homepageImages={homepageImages} />;
+      return <Home onSearchClick={() => setCurrentView('search')} onCategoryClick={(q) => { setSearchQuery(q); setCurrentView('search'); }} products={products} onProductClick={handleProductClick} homepageImages={homepageImages} />;
     }
     if (activeTab === 'cart') {
-      return <Basket onCheckout={() => setCurrentView('checkout')} cartItems={cartItems} setCartItems={setCartItems} onProductClick={handleProductClick} />;
+      return <Basket onCheckout={() => setCurrentView('checkout')} cartItems={cartItems} setCartItems={setCartItems} onProductClick={handleProductClick} onCategoryClick={(q) => { setSearchQuery(q); setCurrentView('search'); }} />;
     }
     if (activeTab === 'profile') {
       return <Profile onNavigate={(v) => setCurrentView(v)} />;

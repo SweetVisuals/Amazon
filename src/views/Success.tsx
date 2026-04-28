@@ -10,8 +10,8 @@ export const Success = ({ onContinue, onNavigate, deliveryInfo }: { onContinue: 
          <div className="flex items-center gap-4">
              <Menu className="w-7 h-7" />
              <img 
-               src="https://m.media-amazon.com/images/G/01/gc/pvp/amazon_logo_white._CB485933486_.png" 
-               className="h-7 mt-1" 
+               src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" 
+               className="h-5 mt-2 brightness-0 invert" 
                alt="Amazon" 
              />
          </div>

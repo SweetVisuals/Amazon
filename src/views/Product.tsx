@@ -18,7 +18,18 @@ export const Product = ({
   onSearch: () => void;
 }) => {
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariants, setSelectedVariants] = useState<any>({});
   const cartItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  React.useEffect(() => {
+    if (product.variants?.length) {
+      const initial: any = {};
+      product.variants.forEach((v: any) => {
+        if (v.options?.length) initial[v.type] = v.options[0];
+      });
+      setSelectedVariants(initial);
+    }
+  }, [product]);
 
   if (!product) return null;
 
@@ -81,7 +92,33 @@ export const Product = ({
          <div className="text-[#007185] text-[14px] mb-4">FREE Returns</div>
          <div className="text-[14px] font-medium mb-1 text-green-700">In stock</div>
 
-         <div className="mb-4">
+         {/* Variants */}
+         {product.variants?.length > 0 && (
+           <div className="mt-4 space-y-4">
+             {product.variants.map((v: any, idx: number) => (
+               <div key={idx} className="flex flex-col gap-2">
+                 <span className="text-[14px] font-bold text-[#0f1111]">{v.type}: <span className="font-medium text-gray-600">{selectedVariants[v.type]}</span></span>
+                 <div className="flex flex-wrap gap-2">
+                   {v.options.map((opt: string) => (
+                     <button
+                       key={opt}
+                       onClick={() => setSelectedVariants({ ...selectedVariants, [v.type]: opt })}
+                       className={`px-4 py-2 border rounded-lg text-[14px] font-medium transition-all ${
+                         selectedVariants[v.type] === opt 
+                           ? 'border-[#f4aa00] bg-[#fff9e6] text-[#0f1111] ring-1 ring-[#f4aa00]' 
+                           : 'border-gray-300 bg-white text-[#0f1111] active:bg-gray-50 shadow-sm'
+                       }`}
+                     >
+                       {opt}
+                     </button>
+                   ))}
+                 </div>
+               </div>
+             ))}
+           </div>
+         )}
+
+         <div className="mb-4 mt-6">
             <select 
                value={quantity} 
                onChange={e => setQuantity(Number(e.target.value))}
@@ -94,7 +131,7 @@ export const Product = ({
          </div>
 
          <button 
-            onClick={() => onAddToCart(product, quantity)}
+            onClick={() => onAddToCart({ ...product, selectedVariants }, quantity)}
             className="w-full bg-[#ffd814] hover:bg-[#f7ca00] text-[#0f1111] py-3 rounded-full font-medium text-[15px] shadow-sm mb-3"
          >
             Add to Basket

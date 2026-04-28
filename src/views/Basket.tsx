@@ -1,7 +1,7 @@
 import React from 'react';
 import { CameraIcon, CheckCircleIcon, CheckSquareIcon, MicIcon, MinusIcon, PlusIcon, SearchIcon, TrashIcon } from '../components/Icons';
 
-export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick }: { onCheckout: () => void, cartItems: any[], setCartItems: (items: any[]) => void, onProductClick: (p: any) => void }) => {
+export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick, onCategoryClick }: { onCheckout: () => void, cartItems: any[], setCartItems: (items: any[]) => void, onProductClick: (p: any) => void, onCategoryClick: (q: string) => void }) => {
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const updateQuantity = (id: string, delta: number) => {
@@ -23,7 +23,10 @@ export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick }: 
       {/* Header Area */}
       <div className="amazon-header-bg px-4 pt-10 pb-0 shadow-sm sticky top-0 z-50">
         {/* Search Bar */}
-        <div className="bg-white rounded-md flex items-center px-3 py-2 shadow-sm mb-3">
+        <div 
+          className="bg-white rounded-md flex items-center px-3 py-2 shadow-sm mb-3 cursor-text"
+          onClick={() => onCategoryClick('')}
+        >
           <SearchIcon className="text-gray-500 w-5 h-5 mr-2" />
           <span className="text-gray-500 text-[15px] flex-1 truncate">Search Amazon</span>
           <div className="flex items-center space-x-3 text-gray-500">

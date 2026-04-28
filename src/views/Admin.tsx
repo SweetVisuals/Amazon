@@ -24,6 +24,10 @@ export const Admin = ({
   const [imgUrl, setImgUrl] = useState('');
   const [prodTitle, setProdTitle] = useState('');
   const [prodPrice, setProdPrice] = useState('');
+  const [variants, setVariants] = useState<any[]>([]);
+  const [showVariantBuilder, setShowVariantBuilder] = useState(false);
+  const [newVariantType, setNewVariantType] = useState('Size');
+  const [newVariantOptions, setNewVariantOptions] = useState('');
 
   const handleAddCard = (e: React.FormEvent) => {
     e.preventDefault();
@@ -574,6 +578,74 @@ export const Admin = ({
                         className="w-full border border-gray-300 rounded p-2 text-[14px] focus:ring-2 focus:ring-[#f4aa00] focus:outline-none"
                         required
                       />
+                  </div>
+
+                  {/* Variants Section */}
+                  <div className="border-t border-gray-100 pt-4">
+                      <div className="flex justify-between items-center mb-3">
+                          <label className="text-[13px] font-bold text-gray-700">Variants</label>
+                          <button 
+                            type="button" 
+                            onClick={() => setShowVariantBuilder(true)}
+                            className="text-[#007185] text-[13px] font-medium flex items-center gap-1"
+                          >
+                             <Plus className="w-4 h-4" /> Add Variant
+                          </button>
+                      </div>
+
+                      {showVariantBuilder && (
+                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 mb-4">
+                              <div className="flex flex-col gap-3">
+                                  <input 
+                                    className="w-full border border-gray-300 rounded p-2 text-[14px]"
+                                    placeholder="Variant Type (e.g. Size, Color)"
+                                    value={newVariantType}
+                                    onChange={e => setNewVariantType(e.target.value)}
+                                  />
+                                  <input 
+                                    className="w-full border border-gray-300 rounded p-2 text-[14px]"
+                                    placeholder="Options (comma separated)"
+                                    value={newVariantOptions}
+                                    onChange={e => setNewVariantOptions(e.target.value)}
+                                  />
+                                  <div className="flex gap-2">
+                                      <button 
+                                        type="button"
+                                        onClick={() => {
+                                            if (!newVariantType || !newVariantOptions) return;
+                                            const options = newVariantOptions.split(',').map(s => s.trim()).filter(s => s);
+                                            setVariants([...variants, { type: newVariantType, options }]);
+                                            setNewVariantType('Size');
+                                            setNewVariantOptions('');
+                                            setShowVariantBuilder(false);
+                                        }}
+                                        className="flex-1 bg-[#007185] text-white py-2 rounded text-[13px] font-medium"
+                                      >
+                                          Add
+                                      </button>
+                                      <button 
+                                        type="button"
+                                        onClick={() => setShowVariantBuilder(false)}
+                                        className="flex-1 bg-white border border-gray-300 py-2 rounded text-[13px] font-medium"
+                                      >
+                                          Cancel
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                      )}
+
+                      <div className="flex flex-wrap gap-2">
+                          {variants.map((v, idx) => (
+                              <div key={idx} className="bg-white border border-gray-300 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+                                  <span className="text-[12px] font-bold">{v.type}:</span>
+                                  <span className="text-[12px] text-gray-600 truncate max-w-[100px]">{v.options.join(', ')}</span>
+                                  <button type="button" onClick={() => setVariants(variants.filter((_, i) => i !== idx))}>
+                                      <X className="w-3.5 h-3.5 text-gray-400" />
+                                  </button>
+                              </div>
+                          ))}
+                      </div>
                   </div>
 
                   <button type="submit" className="w-full bg-[#ffd814] hover:bg-[#f7ca00] text-[#0f1111] py-3 rounded-full font-medium text-[15px] shadow-sm mt-2">
