@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeft, Check, Reply, Forward, SmilePlus, Lock, Inbox, AlertCircle, Maximize2, MoreHorizontal, Archive, Trash2, Mail } from 'lucide-react';
 
 export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) => {
-  const firstItem = order?.order_items?.[0] || {};
+  const firstItem = order?.order_items?.[0] || { title: 'Order Confirmation' };
   const date = order?.created_at ? new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'Apr 26';
   const fullName = order?.delivery_address?.name || 'NICOLAS';
   const orderNumber = order?.id?.slice(0, 8).toUpperCase() || '202-5371485-8987523';
@@ -28,8 +28,8 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
 
       <div className="px-4 py-4">
          <div className="flex items-start justify-between mb-2">
-            <h1 className="text-[22px] text-gray-900 leading-tight pr-4">
-               Ordered: '{firstItem.title?.slice(0, 30)}...'
+            <h1 className="text-[22px] text-gray-900 font-bold leading-tight pr-4">
+               Ordered: '{firstItem.title?.slice(0, 35)}...'
             </h1>
             <div className="bg-gray-100 px-2 py-0.5 rounded text-[12px] text-gray-600 font-medium">
                Inbox
@@ -41,8 +41,8 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
          {/* Sender info */}
          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-full border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center p-2">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/960px-Amazon_logo.svg.png" className="w-full object-contain" alt="Amazon" />
+               <div className="w-10 h-10 rounded-full border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center bg-white p-1.5">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Amazon_icon.svg" className="w-full h-full object-contain" alt="Amazon" />
                </div>
                <div>
                   <div className="flex items-center">
