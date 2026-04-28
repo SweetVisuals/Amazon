@@ -19,7 +19,7 @@ export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick }: 
   };
 
   return (
-    <div className="flex flex-col h-full bg-white overflow-y-auto pb-20">
+    <div className="flex flex-col h-full bg-white overflow-y-auto pb-20 absolute inset-0 overflow-x-hidden">
       {/* Header Area */}
       <div className="amazon-header-bg px-4 pt-10 pb-0 shadow-sm sticky top-0 z-50">
         {/* Search Bar */}

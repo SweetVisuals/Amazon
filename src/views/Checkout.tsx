@@ -76,13 +76,13 @@ export const Checkout = ({
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <div className="flex flex-col h-full bg-[#EAEDED] overflow-y-auto">
+    <div className="flex flex-col h-full bg-[#EAEDED] overflow-y-auto absolute inset-0 overflow-x-hidden">
       {/* Header */}
       <div className="bg-gradient-to-b from-[#f7dfa5] to-[#f0c14b] px-3 py-3 flex items-center shadow-sm border-b border-[#cca73d]">
-        <button onClick={onBack} className="mr-3 text-[#0f1111]">
+        <button onClick={onBack} className="mr-3 text-[#0f1111] shrink-0">
           <ArrowLeftIcon className="w-7 h-7" />
         </button>
-        <span className="text-[20px] font-medium text-[#0f1111] truncate">Place Your Order - Amazon.com...</span>
+        <span className="text-[20px] font-medium text-[#0f1111] truncate flex-1 min-w-0">Place Your Order - Amazon.com Checkout</span>
       </div>
 
       <div className="bg-white px-4 py-3 mb-2 shadow-sm border-b border-gray-200">

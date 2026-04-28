@@ -14,7 +14,7 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages }
   }));
 
   return (
-    <div className="flex flex-col h-full bg-[#e3e6e6] overflow-y-auto pb-20">
+    <div className="flex flex-col h-full bg-[#e3e6e6] overflow-y-auto pb-20 absolute inset-0 overflow-x-hidden">
       {/* Header Area */}
       <div className="amazon-header-bg px-4 pt-10 pb-2">
         {/* Search Bar */}
