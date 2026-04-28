@@ -66,7 +66,7 @@ export const Checkout = ({
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     setPlacingOrder(false);
-    onComplete(orderData); // pass the order data back
+    onComplete({ ...orderData, order_items: cartItems }); // pass the order data with items back
   };
 
   if (authLoading) {

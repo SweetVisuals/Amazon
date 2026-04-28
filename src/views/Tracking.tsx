@@ -37,9 +37,9 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
           <div className="bg-white mb-2 border-y border-gray-200 pt-6 pb-6 w-full flex flex-col items-center shadow-sm">
                <h3 className="text-[18px] font-bold text-[#0f1111] mb-6 self-start px-4 w-full">Ordered</h3>
                
-               <div className="w-[85%] mx-auto relative h-8 flex items-center justify-between z-0 mb-6">
-                   <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 -mt-0.5 rounded-full z-[-1]" />
-                   <div className="absolute top-1/2 left-0 w-[25%] h-1.5 bg-[#007185] -mt-0.5 rounded-l-full z-[-1]" />
+                <div className="w-[85%] mx-auto relative h-8 flex items-center justify-between z-0 mb-6 mt-2">
+                    <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 -mt-0.5 rounded-full z-[-1]" />
+                    <div className="absolute top-1/2 left-0 w-[20%] h-1.5 bg-[#007185] -mt-0.5 rounded-l-full z-[-1]" />
                    
                    <div className="flex flex-col items-center relative">
                        <div className="w-5 h-5 bg-[#007185] rounded-full flex items-center justify-center ring-4 ring-white">
@@ -64,12 +64,30 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
                    </div>
                </div>
 
-               <div className="w-full px-4 mt-8">
-                   <button className="w-full bg-white border border-gray-300 hover:bg-gray-50 py-3 rounded-full shadow-sm font-medium text-[15px] flex items-center justify-center gap-2">
-                       <SquarePen className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
-                       Update delivery instructions
-                   </button>
-               </div>
+                <div className="w-full px-4 mt-8">
+                    <button className="w-full bg-white border border-gray-300 hover:bg-gray-50 py-3 rounded-full shadow-sm font-medium text-[15px] flex items-center justify-center gap-2">
+                        <SquarePen className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
+                        Update delivery instructions
+                    </button>
+                </div>
+           </div>
+
+           <div className="bg-white mb-2 border-y border-gray-200 p-4 w-full flex flex-col shadow-sm">
+              <h3 className="text-[18px] font-bold text-[#0f1111] mb-4">Items in this shipment</h3>
+              <div className="flex flex-col gap-4">
+                  {(order?.order_items || []).map((item: any, i: number) => (
+                      <div key={i} className="flex gap-4">
+                          <div className="w-16 h-16 bg-gray-50 rounded flex items-center justify-center p-1 shrink-0">
+                              <img src={item.image_url || item.imageUrl} className="max-w-full max-h-full object-contain mix-blend-multiply" />
+                          </div>
+                          <div className="flex-1 flex flex-col">
+                              <span className="text-[14px] text-[#0f1111] line-clamp-2 leading-tight">{item.title}</span>
+                              <span className="text-[14px] font-bold text-[#0f1111] mt-1">£{(item.price_at_purchase || item.price || 0).toFixed(2)}</span>
+                              <span className="text-[12px] text-gray-500">Qty: {item.quantity}</span>
+                          </div>
+                      </div>
+                  ))}
+              </div>
           </div>
 
           <div className="bg-white mb-2 border-y border-gray-200 p-4 w-full flex flex-col shadow-sm">
