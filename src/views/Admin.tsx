@@ -141,7 +141,7 @@ export const Admin = ({
               <select 
                 value={cardBrand} 
                 onChange={e => setCardBrand(e.target.value)}
-                className="border border-gray-300 rounded p-2 text-[14px]"
+                className="border border-gray-300 rounded p-2 text-[16px]"
               >
                  <option value="Visa">Visa</option>
                  <option value="Mastercard">Mastercard</option>

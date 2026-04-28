@@ -41,7 +41,7 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any, data?: any
          <ArrowLeft className="w-6 h-6 text-[#0f1111] mr-3" onClick={onBack} />
          <div className="flex-1 flex items-center bg-white rounded-[8px] px-3 py-2 shadow-sm border border-gray-300">
              <SearchIcon className="w-5 h-5 text-gray-500 mr-2" />
-             <input type="text" placeholder="Search or ask a question" className="flex-1 outline-none text-[15px]" />
+             <input type="text" placeholder="Search or ask a question" className="flex-1 outline-none text-[16px]" />
              <Camera className="w-5 h-5 text-gray-400 mx-2" />
              <Mic className="w-5 h-5 text-gray-400" />
          </div>
