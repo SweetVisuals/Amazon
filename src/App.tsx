@@ -23,6 +23,22 @@ export default function App() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [previousOrders, setPreviousOrders] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadOrders() {
+      const { supabase } = await import('./lib/supabase');
+      const { data } = await supabase
+        .from('order_items')
+        .select('*')
+        .order('id', { ascending: false });
+      
+      if (data) {
+        setPreviousOrders(data);
+      }
+    }
+    loadOrders();
+  }, [currentView]);
 
   const handleProductClick = (product: any) => {
     setSelectedProduct(product);
@@ -216,7 +232,7 @@ export default function App() {
 
     // Main views based on activeTab
     if (activeTab === 'home') {
-      return <Home onSearchClick={() => setCurrentView('search')} onCategoryClick={(q) => { setSearchQuery(q); setCurrentView('search'); }} products={products} onProductClick={handleProductClick} homepageImages={homepageImages} />;
+      return <Home onSearchClick={() => setCurrentView('search')} onCategoryClick={(q) => { setSearchQuery(q); setCurrentView('search'); }} products={products} onProductClick={handleProductClick} homepageImages={homepageImages} previousOrders={previousOrders} />;
     }
     if (activeTab === 'cart') {
       return <Basket onCheckout={() => setCurrentView('checkout')} cartItems={cartItems} setCartItems={setCartItems} onProductClick={handleProductClick} onCategoryClick={(q) => { setSearchQuery(q); setCurrentView('search'); }} />;

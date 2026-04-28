@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CameraIcon, ChevronDownIcon, LocationIcon, MicIcon, SearchIcon, CloseIcon } from '../components/Icons';
 
-export const Home = ({ onSearchClick, products, onProductClick, homepageImages, onCategoryClick }: { onSearchClick: () => void, products?: any[], onProductClick: (product: any) => void, homepageImages?: any, onCategoryClick: (q: string) => void }) => {
+export const Home = ({ onSearchClick, products, onProductClick, homepageImages, onCategoryClick, previousOrders }: { onSearchClick: () => void, products?: any[], onProductClick: (product: any) => void, homepageImages?: any, onCategoryClick: (q: string) => void, previousOrders?: any[] }) => {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [location, setLocation] = useState('SW13 0');
 
@@ -12,6 +12,19 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages, 
       price: (i + 1) * 12.99,
       imageUrl: null
   }));
+  
+  const buyAgainProducts = React.useMemo(() => {
+    if (!previousOrders?.length || !products?.length) return [];
+    const orderedIds = [...new Set(previousOrders.map(o => o.product_id))];
+    return products.filter(p => orderedIds.includes(p.id));
+  }, [previousOrders, products]);
+
+  const recommendedFromOrders = React.useMemo(() => {
+    if (!buyAgainProducts.length || !products?.length) return [];
+    const orderedCategories = [...new Set(buyAgainProducts.map(p => p.category).filter(Boolean))];
+    const boughtIds = buyAgainProducts.map(p => p.id);
+    return products.filter(p => orderedCategories.includes(p.category) && !boughtIds.includes(p.id)).slice(0, 8);
+  }, [buyAgainProducts, products]);
 
   return (
     <div className="flex flex-col h-full bg-[#e3e6e6] overflow-y-auto pb-20 absolute inset-0 overflow-x-hidden">
@@ -168,6 +181,46 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages, 
           </div>
           <button className="text-[#007185] text-[13px] font-medium mt-3 text-left">See all categories</button>
         </div>
+
+        {buyAgainProducts.length > 0 && (
+          <div className="bg-white rounded-[12px] p-2.5 shadow-sm border border-gray-100 flex flex-col mt-2">
+            <div className="flex justify-between items-center mb-2.5">
+               <h3 className="text-[17px] font-bold leading-tight">Buy Again</h3>
+               <button className="text-[#007185] text-[13px]" onClick={() => onCategoryClick('bought')}>See all</button>
+            </div>
+            <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2">
+               {buyAgainProducts.map((p) => (
+                  <div key={p.id} className="w-[110px] shrink-0 flex flex-col cursor-pointer" onClick={() => onProductClick(p)}>
+                     <div className="w-full h-[110px] bg-[#f0f2f5] rounded-md mb-2 flex items-center justify-center p-1.5">
+                        {p.imageUrl ? (
+                           <img src={p.imageUrl} alt={p.title} className="max-w-full max-h-full object-contain mix-blend-multiply" />
+                        ) : null}
+                     </div>
+                     <div className="text-[12px] text-[#0f1111] line-clamp-2 leading-tight">You previously bought this</div>
+                  </div>
+               ))}
+            </div>
+          </div>
+        )}
+
+        {recommendedFromOrders.length > 0 && (
+          <div className="bg-white rounded-[12px] p-2.5 shadow-sm border border-gray-100 flex flex-col mt-2">
+            <h3 className="text-[17px] font-bold leading-tight mb-2.5">Recommended based on your orders</h3>
+            <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2">
+               {recommendedFromOrders.map((p) => (
+                  <div key={p.id} className="w-[120px] shrink-0 flex flex-col cursor-pointer" onClick={() => onProductClick(p)}>
+                     <div className="w-full h-[120px] bg-[#f0f2f5] rounded-md mb-2 flex items-center justify-center p-1.5">
+                        {p.imageUrl ? (
+                           <img src={p.imageUrl} alt={p.title} className="max-w-full max-h-full object-contain mix-blend-multiply" />
+                        ) : null}
+                     </div>
+                     <div className="text-[13px] text-[#0f1111] line-clamp-2 leading-tight font-medium">£{p.price.toFixed(2)}</div>
+                     <div className="text-[12px] text-gray-500 line-clamp-1">{p.title}</div>
+                  </div>
+               ))}
+            </div>
+          </div>
+        )}
 
          {/* More products */}
         <div className="bg-white rounded-[12px] p-2.5 shadow-sm border border-gray-100 flex flex-col mt-2">
