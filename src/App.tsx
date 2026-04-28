@@ -20,6 +20,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [currentView, setCurrentView] = useState<View>('main');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [cartItems, setCartItems] = useState<any[]>([]);
 
   const handleProductClick = (product: any) => {
@@ -114,8 +115,25 @@ export default function App() {
      dealsTailored: [
        'https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg',
        'https://m.media-amazon.com/images/I/81fH+uVp-cL._AC_SX679_.jpg',
-     ]
+     ],
+     orangeCard: ''
   });
+
+  useEffect(() => {
+    async function loadHomepageImages() {
+      const { supabase } = await import('./lib/supabase');
+      const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'homepage_images')
+        .maybeSingle();
+
+      if (data && data.value) {
+        setHomepageImages(data.value as any);
+      }
+    }
+    loadHomepageImages();
+  }, []);
 
   const [deliveryInfo, setDeliveryInfo] = useState({
      name: 'NICOLAS K THEATO',
@@ -123,6 +141,29 @@ export default function App() {
      addressLine2: 'LONDON, SW13 0HF',
      country: 'United Kingdom',
   });
+
+  useEffect(() => {
+    async function loadDeliveryInfo() {
+      const { supabase } = await import('./lib/supabase');
+      const { data } = await supabase
+        .from('addresses')
+        .select('*')
+        .eq('is_default', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
+        setDeliveryInfo({
+          name: data.full_name,
+          addressLine1: data.line1,
+          addressLine2: `${data.city}${data.zip ? ', ' + data.zip : ''}`,
+          country: data.country
+        });
+      }
+    }
+    loadDeliveryInfo();
+  }, []);
 
   const renderContent = () => {
     if (currentView === 'search') {
@@ -134,19 +175,19 @@ export default function App() {
     }
 
     if (currentView === 'success') {
-      return <Success onContinue={() => { setCurrentView('main'); setActiveTab('home'); setCartItems([]); }} onNavigate={(v) => setCurrentView(v)} />;
+      return <Success onContinue={() => { setCurrentView('main'); setActiveTab('home'); setCartItems([]); }} onNavigate={(v) => setCurrentView(v)} deliveryInfo={deliveryInfo} />;
     }
 
     if (currentView === 'orders') {
-      return <Orders onNavigate={(v) => setCurrentView(v)} onBack={() => setCurrentView('main')} />;
+      return <Orders onNavigate={(v, data) => { if (data) setSelectedOrder(data); setCurrentView(v); }} onBack={() => setCurrentView('main')} />;
     }
 
     if (currentView === 'tracking') {
-      return <Tracking onBack={() => setCurrentView('orders')} onViewOrderDetails={() => setCurrentView('invoice')} />;
+      return <Tracking order={selectedOrder} onBack={() => setCurrentView('orders')} onViewOrderDetails={() => setCurrentView('invoice')} />;
     }
 
     if (currentView === 'invoice') {
-      return <Invoice onBack={() => setCurrentView('tracking')} />;
+      return <Invoice order={selectedOrder} onBack={() => setCurrentView('tracking')} />;
     }
 
     if (currentView === 'admin') {

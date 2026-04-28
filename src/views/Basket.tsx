@@ -45,7 +45,7 @@ export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick }: 
       <div className="p-4">
          <div className="mb-3 flex items-start">
             <span className="text-[20px] text-[#0f1111] leading-none mt-1 mr-1">Subtotal </span>
-            <span className="text-[24px] font-bold text-[#0f1111] leading-none">£{Math.floor(subtotal)}</span>
+            <span className="text-[24px] font-bold text-[#0f1111] leading-none">£{Math.floor(subtotal).toLocaleString('en-GB')}</span>
             <span className="text-[13px] font-bold text-[#0f1111] leading-none mt-[2px]">{(subtotal.toFixed(2).split('.')[1] || '00')}</span>
          </div>
          
@@ -99,41 +99,42 @@ export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick }: 
                                {item.title}
                              </h3>
                              <div className="flex items-start mb-1">
-                                <span className="text-[20px] font-bold text-[#0f1111] leading-none">£{Math.floor(item.price)}</span>
+                                <span className="text-[20px] font-bold text-[#0f1111] leading-none">£{Math.floor(item.price).toLocaleString('en-GB')}</span>
                                 <span className="text-[12px] font-bold text-[#0f1111] leading-none pt-[1px]">{(item.price.toFixed(2).split('.')[1] || '00')}</span>
                              </div>
                              <div className="text-[12px] text-gray-500 mb-1">Eligible for FREE Shipping</div>
                              <div className="text-[14px] text-[#058265] mb-2 font-medium">In stock</div>
                           </div>
                        </div>
-
                        {/* Actions */}
-                       <div className="flex flex-wrap gap-2 gap-y-3 pl-[136px]">
-                           {/* Quantity Pill */}
-                           <div className="flex items-center bg-white outline outline-1 outline-gray-300 rounded-full h-[36px] min-w-[120px] overflow-hidden drop-shadow-sm shadow-black/5 ring-1 ring-black/5">
-                              <button onClick={() => updateQuantity(item.id, -1)} className="px-3 h-full flex items-center justify-center bg-[#f0f2f5] hover:bg-gray-200 active:bg-gray-300 relative after:content-[''] after:absolute after:right-0 after:top-1.5 after:bottom-1.5 after:w-[1px] after:bg-gray-300">
-                                  {item.quantity === 1 ? <TrashIcon className="w-5 h-5 text-gray-700" /> : <MinusIcon className="w-5 h-5 text-gray-700" />}
-                              </button>
-                              <div className="flex-1 text-center font-medium text-[15px] bg-white h-full flex items-center justify-center text-[#0f1111]">{item.quantity}</div>
-                              <button onClick={() => updateQuantity(item.id, 1)} className="px-3 h-full flex items-center justify-center bg-[#f0f2f5] hover:bg-gray-200 active:bg-gray-300 relative before:content-[''] before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[1px] before:bg-gray-300">
-                                  <PlusIcon className="w-5 h-5 text-gray-700" />
-                              </button>
-                           </div>
+                       <div className="flex flex-col gap-3 pl-[136px]">
+                           <div className="flex items-center gap-2">
+                               {/* Quantity Pill */}
+                               <div className="flex items-center bg-white border-2 border-[#ffd814] rounded-full h-[36px] min-w-[100px] overflow-hidden shadow-sm">
+                                  <button onClick={() => updateQuantity(item.id, -1)} className="px-2 h-full flex items-center justify-center bg-[#f0f2f5] hover:bg-gray-200 active:bg-gray-300 relative after:content-[''] after:absolute after:right-0 after:top-1.5 after:bottom-1.5 after:w-[1px] after:bg-gray-300">
+                                      {item.quantity === 1 ? <TrashIcon className="w-4 h-4 text-gray-700" /> : <MinusIcon className="w-4 h-4 text-gray-700" />}
+                                  </button>
+                                  <div className="flex-1 text-center font-bold text-[15px] bg-white h-full flex items-center justify-center text-[#0f1111]">{item.quantity}</div>
+                                  <button onClick={() => updateQuantity(item.id, 1)} className="px-2 h-full flex items-center justify-center bg-[#f0f2f5] hover:bg-gray-200 active:bg-gray-300 relative before:content-[''] before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[1px] before:bg-gray-300">
+                                      <PlusIcon className="w-4 h-4 text-gray-700" />
+                                  </button>
+                               </div>
 
-                           <button onClick={() => removeItem(item.id)} className="border border-gray-300 rounded-full px-4 h-[36px] text-[14px] font-medium shadow-sm bg-white hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                              Delete
-                           </button>
-                           <button className="border border-gray-300 rounded-full px-4 h-[36px] text-[14px] font-medium shadow-sm bg-white hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                              Save for later
-                           </button>
+                               <button onClick={() => removeItem(item.id)} className="bg-white rounded-full px-3 h-[36px] text-[13px] font-medium shadow-[0_2px_5px_0_rgba(213,217,217,0.5)] hover:bg-gray-50 active:bg-gray-100 transition-colors whitespace-nowrap">
+                                   Delete
+                               </button>
+                               <button className="bg-white rounded-full px-3 h-[36px] text-[13px] font-medium shadow-[0_2px_5px_0_rgba(213,217,217,0.5)] hover:bg-gray-50 active:bg-gray-100 transition-colors whitespace-nowrap">
+                                   Save for later
+                               </button>
+                           </div>
                            
-                           <div className="w-full flex gap-2 mt-1">
-                              <button className="border border-gray-300 rounded-full px-4 h-[36px] text-[14px] font-medium shadow-sm bg-white hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                                  See more like this
-                              </button>
-                              <button className="border border-gray-300 rounded-full px-4 h-[36px] text-[14px] font-medium shadow-sm bg-white hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                                  Share
-                              </button>
+                           <div className="flex gap-2">
+                               <button className="bg-white rounded-full px-3 h-[36px] text-[13px] font-medium shadow-[0_2px_5px_0_rgba(213,217,217,0.5)] hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                                   Share
+                               </button>
+                               <button className="bg-white rounded-full px-3 h-[36px] text-[13px] font-medium shadow-[0_2px_5px_0_rgba(213,217,217,0.5)] hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                                   See more like this
+                               </button>
                            </div>
                        </div>
                    </div>

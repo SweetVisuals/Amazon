@@ -3,13 +3,13 @@ import { SearchIcon, ShoppingCart, Menu, ChevronRight, Camera, Mic, ArrowLeft } 
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 
-export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any) => void, onBack: () => void }) => {
-  const { user } = useAuth();
+export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any, data?: any) => void, onBack: () => void }) => {
+  const { profile } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!profile) return;
     setLoading(true);
 
     const fetchOrders = async () => {
@@ -19,6 +19,7 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any) => void, o
           *,
           order_items (*)
         `)
+        .eq('user_id', profile.id)
         .order('created_at', { ascending: false });
 
       if (data) {
@@ -31,7 +32,7 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any) => void, o
     };
 
     fetchOrders();
-  }, [user]);
+  }, [profile]);
 
   return (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto pb-10">
@@ -103,15 +104,15 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any) => void, o
       <div className="bg-white px-4 py-4 flex flex-col gap-3">
          <h2 className="text-[20px] font-bold text-[#0f1111]">Purchase history</h2>
          
-         {!user && (
+         {!profile && (
             <div className="text-[14px] text-gray-600 mb-2">Please log in to see your orders.</div>
          )}
          
-         {user && loading && (
+         {profile && loading && (
             <div className="text-[14px] text-gray-600 mb-2">Loading orders...</div>
          )}
-
-         {user && !loading && orders.length === 0 && (
+ 
+         {profile && !loading && orders.length === 0 && (
             <div className="text-[14px] text-gray-600 mb-2">You have no orders yet.</div>
          )}
 
@@ -122,7 +123,7 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any) => void, o
             const date = new Date(order.created_at).toLocaleDateString();
 
             return (
-               <div key={order.id} className="border border-gray-300 rounded-[8px] p-4 flex gap-4 cursor-pointer" onClick={() => onNavigate('tracking')}>
+               <div key={order.id} className="border border-gray-300 rounded-[8px] p-4 flex gap-4 cursor-pointer" onClick={() => onNavigate('tracking', order)}>
                  <div className="w-[80px] shrink-0 flex items-center justify-center">
                      <img src={imageUrl} className="w-[80px] h-[80px] object-contain mix-blend-multiply" alt="product" />
                  </div>

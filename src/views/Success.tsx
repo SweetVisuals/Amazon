@@ -2,16 +2,18 @@ import React from 'react';
 import { CheckCircleIcon } from '../components/Icons';
 import { SearchIcon, ShoppingCart, Menu, ChevronRight } from 'lucide-react';
 
-export const Success = ({ onContinue, onNavigate }: { onContinue: () => void, onNavigate: (v: any) => void }) => {
+export const Success = ({ onContinue, onNavigate, deliveryInfo }: { onContinue: () => void, onNavigate: (v: any) => void, deliveryInfo?: any }) => {
   return (
     <div className="flex flex-col h-full bg-[#f2f4f8] z-50 absolute inset-0 overflow-y-auto">
       {/* Header */}
       <div className="bg-[#232f3e] px-4 pt-12 pb-4 flex items-center justify-between text-white shadow-md">
          <div className="flex items-center gap-4">
              <Menu className="w-7 h-7" />
-             <div className="font-bold text-2xl flex items-center tracking-tighter mt-1">
-                amazon
-             </div>
+             <img 
+               src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1024px-Amazon_logo.svg.png" 
+               className="h-7 brightness-0 invert mt-1" 
+               alt="Amazon" 
+             />
          </div>
          <div className="flex items-center gap-4">
              <SearchIcon className="w-6 h-6" />
@@ -30,15 +32,14 @@ export const Success = ({ onContinue, onNavigate }: { onContinue: () => void, on
          <p className="text-[14px] text-gray-700 mb-6">Confirmation will be sent to your email.</p>
          
          <div className="border-t border-gray-200 pt-4 mb-4 text-[14px] text-[#0f1111]">
-            <p className="mb-2"><strong>Shipping to</strong><br/>John Doe, 123 Main St...</p>
+            <p className="mb-2"><strong>Shipping to</strong><br/>{deliveryInfo?.name || 'NICOLAS K THEATO'}, {deliveryInfo?.addressLine1 || '20, LIMES AVENUE'}...</p>
          </div>
 
          <div className="border-t border-gray-200 py-4 flex items-center justify-between">
             <div className="flex flex-col">
-               <span className="font-bold text-[#0f1111] text-[15px]">6 July - 9 July</span>
+               <span className="font-bold text-[#0f1111] text-[15px]">Wednesday 29 Apr</span>
                <span className="text-gray-600 text-[13px]">Estimated delivery</span>
             </div>
-            <img src="https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg" alt="Item" className="w-[60px] h-[60px] object-contain border border-gray-200 p-1 rounded" />
          </div>
 
          <div className="border-t border-gray-200 pt-4 flex items-center text-[#007185] text-[15px] cursor-pointer" onClick={() => onNavigate('orders')}>

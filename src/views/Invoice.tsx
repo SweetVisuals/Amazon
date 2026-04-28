@@ -1,7 +1,13 @@
 import React from 'react';
 import { ArrowLeft, Check, Reply, Forward, SmilePlus, Lock, Inbox, AlertCircle, Maximize2, MoreHorizontal, Archive, Trash2, Mail } from 'lucide-react';
 
-export const Invoice = ({ onBack }: { onBack: () => void }) => {
+export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) => {
+  const firstItem = order?.order_items?.[0] || {};
+  const date = order?.created_at ? new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'Apr 26';
+  const fullName = order?.delivery_address?.name || 'NICOLAS';
+  const orderNumber = order?.id?.slice(0, 8).toUpperCase() || '202-5371485-8987523';
+  const totalAmount = order?.total_amount || 0;
+
   return (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto">
       {/* App Header (simulating mobile mail client) */}
@@ -20,7 +26,7 @@ export const Invoice = ({ onBack }: { onBack: () => void }) => {
       <div className="px-4 py-4">
          <div className="flex items-start justify-between mb-2">
             <h1 className="text-[22px] text-gray-900 leading-tight pr-4">
-               Ordered: 'Apple iPhone 17 256 GB:...'
+               Ordered: '{firstItem.title?.slice(0, 30)}...'
             </h1>
             <div className="bg-gray-100 px-2 py-0.5 rounded text-[12px] text-gray-600 font-medium">
                Inbox
@@ -39,7 +45,7 @@ export const Invoice = ({ onBack }: { onBack: () => void }) => {
                   <div className="flex items-center">
                      <span className="font-bold text-[15px] text-gray-900 mr-1">Amazon.co.uk</span>
                      <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                     <span className="text-gray-500 text-[13px] ml-2">Apr 26</span>
+                     <span className="text-gray-500 text-[13px] ml-2">{date}</span>
                   </div>
                   <div className="flex items-center text-gray-500 text-[13px]">
                      <span>to me</span>
@@ -65,7 +71,7 @@ export const Invoice = ({ onBack }: { onBack: () => void }) => {
 
             <div className="p-5 pb-8">
                <h2 className="text-[22px] font-bold text-gray-900 mb-6 bg-white">
-                  Thanks for your order, NICOLAS!
+                  Thanks for your order, {fullName.split(' ')[0]}!
                </h2>
 
                {/* Progress tracker */}
@@ -103,34 +109,36 @@ export const Invoice = ({ onBack }: { onBack: () => void }) => {
 
                <div className="mb-6">
                   <h3 className="text-[18px] font-bold text-gray-900">Arriving Wednesday</h3>
-                  <div className="text-[16px] font-bold text-gray-900 mt-1">NICOLAS – LONDON</div>
-                  <div className="text-[15px] text-gray-900 mt-1">Order # 202-5371485-8987523</div>
+                  <div className="text-[16px] font-bold text-gray-900 mt-1">{fullName.toUpperCase()}</div>
+                  <div className="text-[15px] text-gray-900 mt-1">Order # {orderNumber}</div>
                </div>
 
-               <button className="bg-[#ffd814] text-[#0f1111] px-4 py-2.5 rounded-full font-medium text-[14px] mb-8 shadow-sm">
+               <button onClick={onBack} className="bg-[#ffd814] text-[#0f1111] px-4 py-2.5 rounded-full font-medium text-[14px] mb-8 shadow-sm">
                   View or edit order
                </button>
 
-               {/* Item row */}
-               <div className="flex items-start gap-4 mb-6">
-                  <div className="w-[80px] h-[80px] border border-gray-200 flex items-center justify-center p-2 rounded shrink-0">
-                     <img src="https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg" className="w-[60px] h-[60px] object-contain" alt="iphone" />
-                  </div>
-                  <div>
-                     <a href="#" className="text-[15px] text-[#007185] hover:underline hover:text-[#C7511F] leading-snug block mb-1">
-                        Apple iPhone 17 256 GB: 6.3-inch...
-                     </a>
-                     <div className="text-[13px] text-gray-600 mb-0.5">Sold by <a href="#" className="text-[#007185]">Amazon.co.uk</a></div>
-                     <div className="text-[13px] text-gray-600 mb-0.5">Condition: New</div>
-                     <div className="text-[13px] text-gray-600 mb-2">Quantity: 1</div>
-                     <div className="text-[18px] font-bold text-gray-900">£799.00</div>
-                  </div>
-               </div>
+               {/* Item rows */}
+               {order?.order_items?.map((item: any) => (
+                 <div key={item.id} className="flex items-start gap-4 mb-6">
+                    <div className="w-[80px] h-[80px] border border-gray-200 flex items-center justify-center p-2 rounded shrink-0">
+                       <img src={item.image_url} className="w-[60px] h-[60px] object-contain" alt="product" />
+                    </div>
+                    <div>
+                       <a href="#" className="text-[15px] text-[#007185] hover:underline hover:text-[#C7511F] leading-snug block mb-1">
+                          {item.title}
+                       </a>
+                       <div className="text-[13px] text-gray-600 mb-0.5">Sold by <a href="#" className="text-[#007185]">Amazon.co.uk</a></div>
+                       <div className="text-[13px] text-gray-600 mb-0.5">Condition: New</div>
+                       <div className="text-[13px] text-gray-600 mb-2">Quantity: {item.quantity}</div>
+                       <div className="text-[18px] font-bold text-gray-900">£{item.price_at_purchase.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    </div>
+                 </div>
+               ))}
 
                {/* Total */}
                <div className="flex justify-between items-center py-4 border-t border-gray-300 mt-2">
                   <span className="text-[16px] text-gray-900">Total</span>
-                  <span className="text-[16px] font-bold text-gray-900">£799.00</span>
+                  <span className="text-[16px] font-bold text-gray-900">£{totalAmount.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                </div>
             </div>
          </div>

@@ -68,8 +68,9 @@ export const Product = ({
          </div>
 
          <div className="flex items-start mb-2 mt-4">
-            <span className="text-[28px] font-medium leading-none">£{(Math.floor(product.price))}</span>
-            <span className="text-[14px] font-medium leading-none mt-[2px]">{(product.price.toFixed(2).split('.')[1] || '00')}</span>
+            <span className="text-[14px] font-medium leading-none mt-[4px]">£</span>
+            <span className="text-[28px] font-bold leading-none">{Math.floor(product.price).toLocaleString('en-GB')}</span>
+            <span className="text-[14px] font-bold leading-none mt-[2px]">{(product.price.toFixed(2).split('.')[1] || '00')}</span>
          </div>
 
          <div className="text-[#007185] text-[14px] mb-4">FREE Returns</div>
@@ -113,7 +114,7 @@ export const Product = ({
          
          <h2 className="font-bold text-lg mb-3">Product details</h2>
          <p className="text-gray-700 text-sm leading-relaxed mb-4">
-            This is a placeholder description for {product.title}. It features excellent quality and provides great value for the price of £{product.price.toFixed(2)}. Suitable for various uses and highly recommended by customers.
+            This is a placeholder description for {product.title}. It features excellent quality and provides great value for the price of £{product.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}. Suitable for various uses and highly recommended by customers.
          </p>
 
       </div>

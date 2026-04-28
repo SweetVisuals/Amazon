@@ -135,7 +135,7 @@ export const Admin = ({
       <div className="p-4 flex flex-col gap-6">
 
         {/* Saved Cards Admin */}
-        <div className="bg-white p-4 rounded-[8px] border border-gray-200 shadow-sm">
+        <div className="bg-white p-4 rounded-[8px] shadow-sm">
            <h3 className="font-bold text-[18px] mb-4">Manage Saved Cards</h3>
            <form onSubmit={handleAddCard} className="flex flex-col gap-3">
               <select 
@@ -179,7 +179,7 @@ export const Admin = ({
         </div>
 
         {/* Delivery Info Admin */}
-        <div className="bg-white p-4 rounded-[8px] border border-gray-200 shadow-sm">
+        <div className="bg-white p-4 rounded-[8px] shadow-sm">
            <h3 className="font-bold text-[18px] mb-4">Delivery Information</h3>
            <div className="flex flex-col gap-3">
               <input 
@@ -210,40 +210,115 @@ export const Admin = ({
                 onChange={e => setDeliveryInfo({ ...deliveryInfo, country: e.target.value })}
                 className="border border-gray-300 rounded p-2 text-[14px]"
               />
+              <button 
+                onClick={async () => {
+                  const { supabase } = await import('../lib/supabase');
+                  // Parse addressLine2 into city and zip (heuristic)
+                  const parts = deliveryInfo.addressLine2.split(',');
+                  const city = parts[0]?.trim() || '';
+                  const zip = parts[1]?.trim() || '';
+
+                  const { error } = await supabase
+                    .from('addresses')
+                    .update({
+                      full_name: deliveryInfo.name,
+                      line1: deliveryInfo.addressLine1,
+                      city: city,
+                      zip: zip,
+                      country: deliveryInfo.country
+                    })
+                    .eq('is_default', true);
+
+                  if (error) alert("Error saving address: " + error.message);
+                  else alert("Address saved successfully!");
+                }}
+                className="bg-[#ffd814] hover:bg-[#f7ca00] text-[#0f1111] py-2 rounded font-medium text-[14px] shadow-sm mt-1"
+              >
+                 Save Address
+              </button>
            </div>
         </div>
 
         {/* Homepage Images Admin */}
-        <div className="bg-white p-4 rounded-[8px] border border-gray-200 shadow-sm">
-           <h3 className="font-bold text-[18px] mb-4">Homepage Images</h3>
-           <div className="flex flex-col gap-4">
-              <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-1">Hero / 7 days of deals</label>
-                  <input 
-                    type="url" 
-                    value={homepageImages?.hero || ''}
-                    onChange={e => setHomepageImages({ ...homepageImages, hero: e.target.value })}
-                    className="w-full border border-gray-300 rounded p-2 text-[14px]"
-                  />
+        <div className="bg-white p-4 rounded-[8px] shadow-sm">
+           <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-[18px]">Homepage Images</h3>
+              <button 
+                onClick={async () => {
+                  const { supabase } = await import('../lib/supabase');
+                  const { error } = await supabase
+                    .from('site_settings')
+                    .upsert({ key: 'homepage_images', value: homepageImages }, { onConflict: 'key' });
+                  
+                  if (error) alert("Error saving layout: " + error.message);
+                  else alert("Homepage layout saved successfully!");
+                }}
+                className="bg-[#ffd814] hover:bg-[#f7ca00] text-[#0f1111] px-4 py-1.5 rounded-full font-medium text-[13px] shadow-sm"
+              >
+                Save Layout
+              </button>
+           </div>
+           
+           <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                  <label className="block text-[13px] font-bold text-gray-700">Orange Card (M Placeholder)</label>
+                  <div className="flex gap-3">
+                    <input 
+                      type="url" 
+                      placeholder="Replace the 'M' card image"
+                      value={homepageImages?.orangeCard || ''}
+                      onChange={e => setHomepageImages({ ...homepageImages, orangeCard: e.target.value })}
+                      className="flex-1 border border-gray-300 rounded p-2 text-[14px]"
+                    />
+                    {homepageImages?.orangeCard && (
+                      <div className="w-12 h-12 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                        <img src={homepageImages.orangeCard} className="max-w-full max-h-full object-contain" />
+                      </div>
+                    )}
+                  </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                  <label className="block text-[13px] font-bold text-gray-700">Hero / 7 days of deals</label>
+                  <div className="flex gap-3">
+                    <input 
+                      type="url" 
+                      value={homepageImages?.hero || ''}
+                      onChange={e => setHomepageImages({ ...homepageImages, hero: e.target.value })}
+                      className="flex-1 border border-gray-300 rounded p-2 text-[14px]"
+                    />
+                    {homepageImages?.hero && (
+                      <div className="w-12 h-12 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                        <img src={homepageImages.hero} className="max-w-full max-h-full object-contain" />
+                      </div>
+                    )}
+                  </div>
               </div>
 
               <div>
                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Shop deals ending soon (4 items)</label>
-                 <div className="grid grid-cols-1 gap-2">
+                 <div className="grid grid-cols-1 gap-3">
                     {[{t: "15% off", i: 0}, {t: "20% off", i: 1}, {t: "15% off", i: 2}, {t: "15% off", i: 3}].map(({t, i}) => (
-                        <div key={`deals-${i}`} className="flex flex-col">
-                           <span className="text-[11px] text-gray-500 mb-1">{t}</span>
-                           <input 
-                              type="url" 
-                              placeholder={`Image ${i+1}`}
-                              value={homepageImages?.dealsEndingSoon?.[i] || ''}
-                              onChange={e => {
-                                 const newArr = [...(homepageImages?.dealsEndingSoon || ['', '', '', ''])];
-                                 newArr[i] = e.target.value;
-                                 setHomepageImages({ ...homepageImages, dealsEndingSoon: newArr });
-                              }}
-                              className="w-full border border-gray-300 rounded p-2 text-[12px]"
-                           />
+                        <div key={`deals-${i}`} className="flex flex-col gap-1">
+                           <span className="text-[11px] text-gray-500">{t}</span>
+                           <div className="flex gap-2">
+                              <input 
+                                 type="url" 
+                                 placeholder={`Image ${i+1}`}
+                                 value={homepageImages?.dealsEndingSoon?.[i] || ''}
+                                 onChange={e => {
+                                    const newArr = [...(homepageImages?.dealsEndingSoon || ['', '', '', ''])];
+                                    newArr[i] = e.target.value;
+                                    setHomepageImages({ ...homepageImages, dealsEndingSoon: newArr });
+                                 }}
+                                 className="flex-1 border border-gray-300 rounded p-2 text-[12px]"
+                              />
+                              {homepageImages?.dealsEndingSoon?.[i] && (
+                                <div className="w-10 h-10 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                  <img src={homepageImages.dealsEndingSoon[i]} className="max-w-full max-h-full object-contain" />
+                                </div>
+                              )}
+                           </div>
                         </div>
                     ))}
                  </div>
@@ -251,21 +326,28 @@ export const Admin = ({
 
               <div>
                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Shop by Category (4 items)</label>
-                 <div className="grid grid-cols-1 gap-2">
+                 <div className="grid grid-cols-1 gap-3">
                     {[{t: "Electronics", i: 0}, {t: "Fashion", i: 1}, {t: "Home & Kitchen", i: 2}, {t: "Beauty", i: 3}].map(({t, i}) => (
-                        <div key={`cat-${i}`} className="flex flex-col">
-                           <span className="text-[11px] text-gray-500 mb-1">{t}</span>
-                           <input 
-                              type="url" 
-                              placeholder={`Category ${i+1}`}
-                              value={homepageImages?.categories?.[i] || ''}
-                              onChange={e => {
-                                 const newArr = [...(homepageImages?.categories || ['', '', '', ''])];
-                                 newArr[i] = e.target.value;
-                                 setHomepageImages({ ...homepageImages, categories: newArr });
-                              }}
-                              className="w-full border border-gray-300 rounded p-2 text-[12px]"
-                           />
+                        <div key={`cat-${i}`} className="flex flex-col gap-1">
+                           <span className="text-[11px] text-gray-500">{t}</span>
+                           <div className="flex gap-2">
+                              <input 
+                                 type="url" 
+                                 placeholder={`Category ${i+1}`}
+                                 value={homepageImages?.categories?.[i] || ''}
+                                 onChange={e => {
+                                    const newArr = [...(homepageImages?.categories || ['', '', '', ''])];
+                                    newArr[i] = e.target.value;
+                                    setHomepageImages({ ...homepageImages, categories: newArr });
+                                 }}
+                                 className="flex-1 border border-gray-300 rounded p-2 text-[12px]"
+                              />
+                              {homepageImages?.categories?.[i] && (
+                                <div className="w-10 h-10 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                  <img src={homepageImages.categories[i]} className="max-w-full max-h-full object-contain" />
+                                </div>
+                              )}
+                           </div>
                         </div>
                     ))}
                  </div>
@@ -273,21 +355,28 @@ export const Admin = ({
 
               <div>
                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Keep Shopping For (2 items)</label>
-                 <div className="grid grid-cols-1 gap-2">
+                 <div className="grid grid-cols-1 gap-3">
                     {[{t: "Item 1", i: 0}, {t: "Item 2", i: 1}].map(({t, i}) => (
-                        <div key={`keep-${i}`} className="flex flex-col">
-                           <span className="text-[11px] text-gray-500 mb-1">{t}</span>
-                           <input 
-                              type="url" 
-                              placeholder={`Item ${i+1}`}
-                              value={homepageImages?.keepShoppingFor?.[i] || ''}
-                              onChange={e => {
-                                 const newArr = [...(homepageImages?.keepShoppingFor || ['', ''])];
-                                 newArr[i] = e.target.value;
-                                 setHomepageImages({ ...homepageImages, keepShoppingFor: newArr });
-                              }}
-                              className="w-full border border-gray-300 rounded p-2 text-[12px]"
-                           />
+                        <div key={`keep-${i}`} className="flex flex-col gap-1">
+                           <span className="text-[11px] text-gray-500">{t}</span>
+                           <div className="flex gap-2">
+                              <input 
+                                 type="url" 
+                                 placeholder={`Item ${i+1}`}
+                                 value={homepageImages?.keepShoppingFor?.[i] || ''}
+                                 onChange={e => {
+                                    const newArr = [...(homepageImages?.keepShoppingFor || ['', ''])];
+                                    newArr[i] = e.target.value;
+                                    setHomepageImages({ ...homepageImages, keepShoppingFor: newArr });
+                                 }}
+                                 className="flex-1 border border-gray-300 rounded p-2 text-[12px]"
+                              />
+                              {homepageImages?.keepShoppingFor?.[i] && (
+                                <div className="w-10 h-10 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                  <img src={homepageImages.keepShoppingFor[i]} className="max-w-full max-h-full object-contain" />
+                                </div>
+                              )}
+                           </div>
                         </div>
                     ))}
                  </div>
@@ -295,21 +384,28 @@ export const Admin = ({
 
               <div>
                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Sponsored (4 items)</label>
-                 <div className="grid grid-cols-1 gap-2">
+                 <div className="grid grid-cols-1 gap-3">
                     {[{t: "Sponsored Item 1", i: 0}, {t: "Sponsored Item 2", i: 1}, {t: "Sponsored Item 3", i: 2}, {t: "Sponsored Item 4", i: 3}].map(({t, i}) => (
-                        <div key={`spon-${i}`} className="flex flex-col">
-                           <span className="text-[11px] text-gray-500 mb-1">{t}</span>
-                           <input 
-                              type="url" 
-                              placeholder={`Sponsored ${i+1}`}
-                              value={homepageImages?.sponsored?.[i] || ''}
-                              onChange={e => {
-                                 const newArr = [...(homepageImages?.sponsored || ['', '', '', ''])];
-                                 newArr[i] = e.target.value;
-                                 setHomepageImages({ ...homepageImages, sponsored: newArr });
-                              }}
-                              className="w-full border border-gray-300 rounded p-2 text-[12px]"
-                           />
+                        <div key={`spon-${i}`} className="flex flex-col gap-1">
+                           <span className="text-[11px] text-gray-500">{t}</span>
+                           <div className="flex gap-2">
+                              <input 
+                                 type="url" 
+                                 placeholder={`Sponsored ${i+1}`}
+                                 value={homepageImages?.sponsored?.[i] || ''}
+                                 onChange={e => {
+                                    const newArr = [...(homepageImages?.sponsored || ['', '', '', ''])];
+                                    newArr[i] = e.target.value;
+                                    setHomepageImages({ ...homepageImages, sponsored: newArr });
+                                 }}
+                                 className="flex-1 border border-gray-300 rounded p-2 text-[12px]"
+                              />
+                              {homepageImages?.sponsored?.[i] && (
+                                <div className="w-10 h-10 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                  <img src={homepageImages.sponsored[i]} className="max-w-full max-h-full object-contain" />
+                                </div>
+                              )}
+                           </div>
                         </div>
                     ))}
                  </div>
@@ -317,21 +413,28 @@ export const Admin = ({
 
               <div>
                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Top Rated (6 items)</label>
-                 <div className="grid grid-cols-1 gap-2">
+                 <div className="grid grid-cols-1 gap-3">
                     {[{t: "Top Rated Item 1", i: 0}, {t: "Top Rated Item 2", i: 1}, {t: "Top Rated Item 3", i: 2}, {t: "Top Rated Item 4", i: 3}, {t: "Top Rated Item 5", i: 4}, {t: "Top Rated Item 6", i: 5}].map(({t, i}) => (
-                        <div key={`top-${i}`} className="flex flex-col">
-                           <span className="text-[11px] text-gray-500 mb-1">{t}</span>
-                           <input 
-                              type="url" 
-                              placeholder={`Top Rated ${i+1}`}
-                              value={homepageImages?.topRated?.[i] || ''}
-                              onChange={e => {
-                                 const newArr = [...(homepageImages?.topRated || ['', '', '', '', '', ''])];
-                                 newArr[i] = e.target.value;
-                                 setHomepageImages({ ...homepageImages, topRated: newArr });
-                              }}
-                              className="w-full border border-gray-300 rounded p-2 text-[12px]"
-                           />
+                        <div key={`top-${i}`} className="flex flex-col gap-1">
+                           <span className="text-[11px] text-gray-500">{t}</span>
+                           <div className="flex gap-2">
+                              <input 
+                                 type="url" 
+                                 placeholder={`Top Rated ${i+1}`}
+                                 value={homepageImages?.topRated?.[i] || ''}
+                                 onChange={e => {
+                                    const newArr = [...(homepageImages?.topRated || ['', '', '', '', '', ''])];
+                                    newArr[i] = e.target.value;
+                                    setHomepageImages({ ...homepageImages, topRated: newArr });
+                                 }}
+                                 className="flex-1 border border-gray-300 rounded p-2 text-[12px]"
+                              />
+                              {homepageImages?.topRated?.[i] && (
+                                <div className="w-10 h-10 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                  <img src={homepageImages.topRated[i]} className="max-w-full max-h-full object-contain" />
+                                </div>
+                              )}
+                           </div>
                         </div>
                     ))}
                  </div>
@@ -339,21 +442,28 @@ export const Admin = ({
 
               <div>
                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Deals Tailored (2 items)</label>
-                 <div className="grid grid-cols-1 gap-2">
+                 <div className="grid grid-cols-1 gap-3">
                     {[{t: "Deals Tailored 1", i: 0}, {t: "Deals Tailored 2", i: 1}].map(({t, i}) => (
-                        <div key={`tailored-${i}`} className="flex flex-col">
-                           <span className="text-[11px] text-gray-500 mb-1">{t}</span>
-                           <input 
-                              type="url" 
-                              placeholder={`Deal ${i+1}`}
-                              value={homepageImages?.dealsTailored?.[i] || ''}
-                              onChange={e => {
-                                 const newArr = [...(homepageImages?.dealsTailored || ['', ''])];
-                                 newArr[i] = e.target.value;
-                                 setHomepageImages({ ...homepageImages, dealsTailored: newArr });
-                              }}
-                              className="w-full border border-gray-300 rounded p-2 text-[12px]"
-                           />
+                        <div key={`tailored-${i}`} className="flex flex-col gap-1">
+                           <span className="text-[11px] text-gray-500">{t}</span>
+                           <div className="flex gap-2">
+                              <input 
+                                 type="url" 
+                                 placeholder={`Deal ${i+1}`}
+                                 value={homepageImages?.dealsTailored?.[i] || ''}
+                                 onChange={e => {
+                                    const newArr = [...(homepageImages?.dealsTailored || ['', ''])];
+                                    newArr[i] = e.target.value;
+                                    setHomepageImages({ ...homepageImages, dealsTailored: newArr });
+                                 }}
+                                 className="flex-1 border border-gray-300 rounded p-2 text-[12px]"
+                              />
+                              {homepageImages?.dealsTailored?.[i] && (
+                                <div className="w-10 h-10 bg-gray-50 rounded border border-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                  <img src={homepageImages.dealsTailored[i]} className="max-w-full max-h-full object-contain" />
+                                </div>
+                              )}
+                           </div>
                         </div>
                     ))}
                  </div>
@@ -362,7 +472,7 @@ export const Admin = ({
         </div>
 
         {/* Products Admin Wizard Grid */}
-        <div className="bg-white p-4 rounded-[8px] border border-gray-200 shadow-sm">
+        <div className="bg-white p-4 rounded-[8px] shadow-sm">
            <div className="flex justify-between items-center mb-4">
                <h3 className="font-bold text-[18px]">Product Wizard</h3>
            </div>

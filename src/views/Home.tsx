@@ -52,8 +52,12 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages }
           
           {/* Card 1: Half visible orange card */}
           <div className="w-[120px] shrink-0 bg-[#ff681a] rounded-[16px] snap-start flex flex-col pt-6 pb-2 overflow-hidden relative">
-             <div className="bg-white absolute bottom-0 left-0 right-0 h-4/5 rounded-t-full mt-4 flex items-center justify-center shadow-inner">
-               <span className="font-bold text-4xl block pl-8 pt-10">M</span>
+             <div className="bg-white absolute bottom-0 left-0 right-0 h-4/5 rounded-t-full mt-4 flex items-center justify-center shadow-inner overflow-hidden">
+               {homepageImages?.orangeCard ? (
+                 <img src={homepageImages.orangeCard} className="w-full h-full object-cover" />
+               ) : (
+                 <span className="font-bold text-4xl block pl-8 pt-10">M</span>
+               )}
              </div>
           </div>
 
@@ -164,7 +168,7 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages }
                        <div className="w-full h-[140px] bg-[#f0f2f5] rounded-md mb-2"></div>
                     )}
                     <div className="text-[14px] text-[#0f1111] line-clamp-2 leading-tight hover:text-[#007185] transition-colors">{p.title}</div>
-                    <div className="text-[18px] font-medium mt-1">£{p.price.toFixed(2)}</div>
+                    <div className="text-[18px] font-medium mt-1">£{p.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     <div className="text-[#007185] text-[12px] mt-1">Prime</div>
                  </div>
               ))}
@@ -193,7 +197,7 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages }
                       <div className="flex text-[#ffa41c] text-[12px]">★★★★☆</div>
                       <span className="text-[#007185] text-[12px]">{124 + i * 23}</span>
                     </div>
-                    <div className="text-[18px] font-medium mt-1">£{((i + 1) * 29.99).toFixed(2)}</div>
+                    <div className="text-[18px] font-medium mt-1">£{((i + 1) * 29.99).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     <div className="text-[#007185] text-[12px] mt-1">Prime</div>
                  </div>
               ))}
@@ -216,7 +220,7 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages }
                       <div className="flex text-[#ffa41c] text-[12px]">★★★★★</div>
                       <span className="text-[#007185] text-[12px]">{892 + i * 14}</span>
                     </div>
-                    <div className="text-[18px] font-medium mt-1">£{((i + 1) * 8.50).toFixed(2)}</div>
+                    <div className="text-[18px] font-medium mt-1">£{((i + 1) * 8.50).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                  </div>
               ))}
            </div>

@@ -17,23 +17,22 @@ export const Checkout = ({
    cartItems?: any[],
    deliveryInfo?: any
 }) => {
-  const [loading, setLoading] = useState(false);
-  const { user, signIn } = useAuth();
+  const [placingOrder, setPlacingOrder] = useState(false);
+  const { profile, loading: authLoading } = useAuth();
 
   const handlePlaceOrder = async () => {
-    if (!user) {
-      alert("Please login first to place order.");
-      signIn();
+    if (!profile) {
+      alert("Error: No profile loaded. Please wait a moment.");
       return;
     }
-    setLoading(true);
+    setPlacingOrder(true);
     
     // Insert order
     const totalAmount = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     const { data: orderData, error: orderError } = await supabase
       .from('orders')
       .insert({
-        user_id: user.id,
+        user_id: profile.id, // Using profile ID (guest or real)
         total_amount: totalAmount,
         status: 'PENDING',
         delivery_address: deliveryInfo || { name: 'Default Delivery' },
@@ -43,7 +42,7 @@ export const Checkout = ({
 
     if (orderError) {
       alert("Error placing order: " + orderError.message);
-      setLoading(false);
+      setPlacingOrder(false);
       return;
     }
 
@@ -63,9 +62,13 @@ export const Checkout = ({
        console.error("Error inserting items:", itemsError);
     }
 
-    setLoading(false);
+    setPlacingOrder(false);
     onComplete(); // clears cart and navigates and shows success
   };
+
+  if (authLoading) {
+     return <div className="flex flex-col h-full items-center justify-center bg-[#EAEDED]"><div className="w-10 h-10 border-4 border-[#ff9900] border-t-transparent rounded-full animate-spin"></div></div>;
+  }
 
   const defaultCard = savedCards && savedCards.length > 0 ? savedCards[0] : { brand: 'Visa', last4: '9906' };
   
@@ -183,7 +186,7 @@ export const Checkout = ({
                       <span className="text-[#cc0c39] text-[12px] font-bold">Limited time deal</span>
                    </div>
                    <div className="text-[18px] font-bold text-[#0f1111] mt-1 mb-2">
-                       £{item.price.toFixed(2)}
+                       £{item.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                    </div>
                    <div className="text-[14px] text-gray-700">Ships from Amazon EU Sarl</div>
                    <div className="text-[14px] text-[#007185]">Sold by Amazon.co.uk</div>
@@ -213,10 +216,10 @@ export const Checkout = ({
       <div className="bg-white px-4 py-4 mb-2 shadow-sm border-t border-gray-200">
           <button 
              onClick={handlePlaceOrder}
-             disabled={loading}
+             disabled={placingOrder}
              className="w-full bg-[#FFD814] hover:bg-[#F7CA00] border border-[#FCD200] text-[#0f1111] py-3 rounded-full font-medium text-[16px] shadow-sm disabled:opacity-70"
           >
-            {loading ? 'Processing...' : 'Buy now'}
+            {placingOrder ? 'Processing...' : 'Buy now'}
           </button>
           
           <div className="text-[13px] text-[#565959] leading-snug mt-4">
