@@ -85,18 +85,28 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any, data?: any
             <span className="text-[#007185] text-[15px] hover:underline cursor-pointer">See more</span>
          </div>
          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-             <div className="w-[110px] h-[110px] shrink-0 bg-gray-50 rounded-[8px] border border-gray-100 flex items-center justify-center p-2">
-                 <img src="https://m.media-amazon.com/images/I/71Y-tWPE7KL._AC_SX679_.jpg" className="w-full h-full object-contain mix-blend-multiply" />
-             </div>
-             <div className="w-[110px] h-[110px] shrink-0 bg-gray-50 rounded-[8px] border border-gray-100 flex items-center justify-center p-2">
-                 <img src="https://m.media-amazon.com/images/I/61k1qY2B52L._AC_SX679_.jpg" className="w-full h-full object-contain mix-blend-multiply" />
-             </div>
-             <div className="w-[110px] h-[110px] shrink-0 bg-gray-50 rounded-[8px] border border-gray-100 flex items-center justify-center p-2">
-                 <img src="https://m.media-amazon.com/images/I/71Y88S45W6L._AC_SX679_.jpg" className="w-full h-full object-contain mix-blend-multiply" />
-             </div>
-             <div className="w-[110px] h-[110px] shrink-0 bg-gray-50 rounded-[8px] border border-gray-100 flex items-center justify-center p-2">
-                 <img src="https://m.media-amazon.com/images/I/61mQd0T0BTL._AC_SX679_.jpg" className="w-full h-full object-contain mix-blend-multiply" />
-             </div>
+             {(() => {
+                const seen = new Set();
+                const buyAgainItems: any[] = [];
+                orders.forEach(order => {
+                  (order.order_items || []).forEach((item: any) => {
+                    if (!seen.has(item.product_id)) {
+                      seen.add(item.product_id);
+                      buyAgainItems.push(item);
+                    }
+                  });
+                });
+                
+                if (buyAgainItems.length === 0) {
+                  return <div className="text-[14px] text-gray-500 py-4">No items to buy again yet.</div>;
+                }
+
+                return buyAgainItems.slice(0, 10).map((item, i) => (
+                  <div key={i} className="w-[110px] h-[110px] shrink-0 bg-gray-50 rounded-[8px] border border-gray-100 flex items-center justify-center p-2">
+                    <img src={item.image_url || item.imageUrl} className="w-full h-full object-contain mix-blend-multiply" alt="product" />
+                  </div>
+                ));
+             })()}
          </div>
       </div>
 

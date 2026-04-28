@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react';
 
 export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, onBack: () => void, onViewOrderDetails?: () => void }) => {
   const firstItem = order?.order_items?.[0] || {};
-  const imageUrl = firstItem.image_url || 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SY200_.jpg';
+  const imageUrl = firstItem.imageUrl || firstItem.image_url || 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SY200_.jpg';
   const address = order?.delivery_address || { name: 'NICOLAS K THEATO', addressLine1: '20, LIMES AVENUE', addressLine2: 'LONDON, SW13 0HF', country: 'United Kingdom' };
 
   return (
@@ -23,7 +23,7 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
       </div>
 
       <div className="mt-[84px] w-full">
-          <div className="bg-white px-4 py-4 pt-6 mb-2 border-b border-gray-200 flex flex-col items-start gap-4">
+          <div className="bg-white px-4 py-4 pt-6 mb-2 border-b border-gray-200 flex flex-col items-start gap-2">
                <div className="flex justify-between items-start w-full">
                    <h2 className="text-[22px] font-bold text-[#0f1111] leading-tight">
                        {order?.status === 'PENDING' ? 'Processing' : 'Arriving tomorrow by\n10 PM'}
@@ -31,7 +31,17 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
                    <span onClick={onBack} className="text-[#007185] font-medium text-[14px] cursor-pointer hover:underline">See all orders</span>
                </div>
                
-               <img src={imageUrl} className="w-[80px] h-[80px] object-contain mt-2 mb-2 mix-blend-multiply" />
+               <div className="flex items-center gap-4 w-full mt-2">
+                  <div className="w-[100px] h-[100px] bg-gray-50 rounded-lg flex items-center justify-center p-2 shrink-0 border border-gray-100">
+                    <img src={imageUrl} className="max-w-full max-h-full object-contain mix-blend-multiply" />
+                  </div>
+                  {order?.status === 'PENDING' && (
+                    <div className="flex-1">
+                      <div className="text-[15px] font-bold text-[#0f1111] line-clamp-2">{firstItem.title}</div>
+                      <div className="text-[13px] text-gray-500 mt-1">Quantity: {firstItem.quantity || 1}</div>
+                    </div>
+                  )}
+               </div>
           </div>
 
           <div className="bg-white mb-2 border-y border-gray-200 pt-6 pb-6 w-full flex flex-col items-center shadow-sm">
