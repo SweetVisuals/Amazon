@@ -209,6 +209,7 @@ export default function App() {
                onAddToCart={handleAddToCart}
                cartItems={cartItems}
                onGoToCart={() => { setCurrentView('main'); setActiveTab('cart'); }}
+               onSearch={() => setCurrentView('search')}
              />;
     }
 

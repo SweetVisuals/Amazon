@@ -7,13 +7,15 @@ export const Product = ({
   onBack,
   onAddToCart,
   cartItems,
-  onGoToCart
+  onGoToCart,
+  onSearch
 }: { 
   product: any; 
   onBack: () => void;
   onAddToCart: (p: any, q: number) => void;
   cartItems: any[];
   onGoToCart: () => void;
+  onSearch: () => void;
 }) => {
   const [quantity, setQuantity] = useState(1);
   const cartItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -27,7 +29,10 @@ export const Product = ({
          <button onClick={onBack} className="p-2 -ml-2 text-[#0f1111]">
             <ArrowLeftIcon className="w-6 h-6" />
          </button>
-         <div className="flex bg-white rounded-md items-center px-3 py-1.5 flex-1 mx-2 shadow-sm border border-[#a6a6a6]">
+         <div 
+           className="flex bg-white rounded-md items-center px-3 py-1.5 flex-1 mx-2 shadow-sm border border-[#a6a6a6] cursor-text"
+           onClick={onSearch}
+         >
             <SearchIcon className="text-gray-500 w-4 h-4 mr-2" />
             <span className="text-gray-500 text-[14px]">Search Amazon</span>
          </div>
