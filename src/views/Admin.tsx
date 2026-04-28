@@ -302,7 +302,7 @@ export const Admin = ({
               <div>
                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Shop deals ending soon (4 items)</label>
                  <div className="grid grid-cols-1 gap-3">
-                    {[{t: "15% off", i: 0}, {t: "20% off", i: 1}, {t: "15% off", i: 2}, {t: "15% off", i: 3}].map(({t, i}) => (
+                    {[{t: "8% off", i: 0}, {t: "12% off", i: 1}, {t: "15% off", i: 2}, {t: "25% off", i: 3}].map(({t, i}) => (
                         <div key={`deals-${i}`} className="flex flex-col gap-1">
                            <span className="text-[11px] text-gray-500">{t}</span>
                            <div className="flex gap-2">

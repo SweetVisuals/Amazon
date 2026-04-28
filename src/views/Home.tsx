@@ -83,7 +83,7 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages, 
               Shop deals ending soon
             </h2>
             <div className="grid grid-cols-2 gap-2">
-              {[15, 20, 15, 15].map((discount, i) => (
+              {[8, 12, 15, 25].map((discount, i) => (
                 <div 
                   key={i} 
                   className="bg-white rounded-lg p-1.5 flex flex-col justify-between h-[110px] cursor-pointer"
@@ -108,7 +108,7 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages, 
             <h2 className="text-[20px] font-extrabold leading-tight tracking-tight text-white mb-0.5 font-sans">
               7 days of deals
             </h2>
-            <p className="text-white text-[13px] mb-2">Up to 40% off</p>
+            <p className="text-white text-[13px] mb-2">Up to 30% off</p>
             <div className="rounded-lg h-[160px] flex items-center justify-center object-cover overflow-hidden mt-2 bg-[#f0f2f5]">
                {homepageImages?.hero ? (
                   <img src={homepageImages.hero} className="w-full h-full object-cover mix-blend-multiply bg-white" />
