@@ -9,7 +9,7 @@ export const Menu = ({ onBack, onNavigate }: { onBack: () => void, onNavigate: (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto pb-20">
       <div className="amazon-header-bg p-4 pt-12 flex justify-between items-center text-white">
          <div className="flex items-center">
-             <img src="https://m.media-amazon.com/images/G/01/gc/pvp/amazon_logo_white._CB485933486_.png" alt="Amazon" className="h-[22px] object-contain mb-1" />
+             <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" className="h-[22px] object-contain mb-1" />
          </div>
          <button onClick={onBack}>
            <CloseIcon className="w-6 h-6" />
