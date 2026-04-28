@@ -28,7 +28,7 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
 
       <div className="px-4 py-4">
          <div className="flex items-start justify-between mb-2">
-            <h1 className="text-[22px] text-gray-900 font-bold leading-tight pr-4">
+            <h1 className="text-[22px] text-gray-900 font-normal leading-tight pr-4">
                Ordered: '{firstItem.title?.slice(0, 35)}...'
             </h1>
             <div className="bg-gray-100 px-2 py-0.5 rounded text-[12px] text-gray-600 font-medium">
@@ -42,7 +42,7 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
                <div className="w-10 h-10 rounded-full border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center bg-white p-1.5">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Amazon_icon.svg" className="w-full h-full object-contain" alt="Amazon" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" className="w-full h-full object-contain" alt="Amazon" />
                </div>
                <div>
                   <div className="flex items-center">
@@ -126,10 +126,13 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
          {/* The actual Email body - rendering exactly like the screenshot */}
          <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
             {/* Top dark nav */}
-            <div className="bg-[#232f3e] text-white flex justify-between px-6 py-4 text-[15px] font-bold">
-               <span>Your Orders</span>
-               <span>Your Account</span>
-               <span>Buy Again</span>
+            <div className="bg-[#232f3e] text-white flex justify-between items-center px-6 py-4 text-[15px] font-bold">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" className="h-5 brightness-0 invert" alt="Amazon" />
+               <div className="flex gap-4">
+                  <span>Your Orders</span>
+                  <span>Your Account</span>
+                  <span>Buy Again</span>
+               </div>
             </div>
 
             <div className="p-5 pb-8">
