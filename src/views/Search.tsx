@@ -12,7 +12,7 @@ export const Search = ({ onBack, products, onProductClick }: { onBack: () => voi
   return (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0">
       {/* Header */}
-      <div className="amazon-header-bg px-3 pt-10 pb-3 flex items-center">
+      <div className="amazon-header-bg px-4 pt-10 pb-3 flex items-center">
         <button onClick={onBack} className="mr-3 text-[#0f1111]">
           <ArrowLeftIcon className="w-6 h-6" />
         </button>

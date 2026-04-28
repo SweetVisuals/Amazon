@@ -46,9 +46,9 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages }
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-2 space-y-2">
+      <div className="flex-1 px-4 pt-2 pb-2 space-y-2">
         {/* Horizontal Deals Carousel */}
-        <div className="flex space-x-2 overflow-x-auto no-scrollbar -mx-2 px-2 snap-x">
+        <div className="flex space-x-2 overflow-x-auto no-scrollbar snap-x">
           
           {/* Card 1: Half visible orange card */}
           <div className="w-[120px] shrink-0 bg-[#ff681a] rounded-[16px] snap-start flex flex-col pt-6 pb-2 overflow-hidden relative">
@@ -95,7 +95,7 @@ export const Home = ({ onSearchClick, products, onProductClick, homepageImages }
         </div>
 
         {/* Keep Shopping For Row */}
-        <div className="flex space-x-2 overflow-x-auto no-scrollbar -mx-2 px-2 snap-x mt-2">
+        <div className="flex space-x-2 overflow-x-auto no-scrollbar snap-x mt-2">
           
           <div className="w-[170px] shrink-0 bg-white rounded-[16px] p-3 snap-start shadow-sm border border-gray-100 flex flex-col justify-between min-h-[220px]">
              <div>

@@ -230,14 +230,17 @@ export default function App() {
   };
 
   return (
-    <div className="w-full h-screen bg-white flex flex-col font-sans overflow-hidden sm:max-w-md sm:mx-auto sm:border-x sm:border-gray-200 sm:shadow-2xl relative font-medium">
+    <div className="w-full h-[100dvh] bg-white flex flex-col font-sans overflow-hidden sm:max-w-md sm:mx-auto sm:border-x sm:border-gray-200 sm:shadow-2xl relative font-medium">
       <div className="flex-1 relative overflow-hidden">
          {renderContent()}
       </div>
 
       {/* Bottom Navigation */}
       {currentView === 'main' && (
-        <div className="bg-white border-t border-gray-200 h-[52px] pb-safe flex justify-between items-center px-4 shrink-0 relative z-40 shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+        <div 
+          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+          className="bg-white border-t border-gray-200 h-[52px] flex justify-between items-center px-4 shrink-0 relative z-[100] shadow-[0_-1px_3px_rgba(0,0,0,0.05)]"
+        >
            <button 
              onClick={() => setActiveTab('home')} 
              className={`flex flex-col items-center justify-center relative w-12 h-full ${activeTab === 'home' ? 'text-[#008296]' : 'text-[#0f1111]'}`}

@@ -43,7 +43,7 @@ export const Profile = ({ onNavigate }: { onNavigate: (view: any) => void }) => 
   return (
     <div className="flex flex-col h-full bg-[#f2f4f8] overflow-y-auto pb-20">
       {/* Header */}
-      <div className="amazon-teal-bg px-3 pt-12 pb-3 flex items-center shadow-sm">
+      <div className="amazon-teal-bg px-4 pt-12 pb-3 flex items-center shadow-sm">
         <div className="bg-white rounded-[6px] flex items-center flex-1 py-1.5 px-3 shadow-sm border border-[#a6a6a6] focus-within:ring-2 focus-within:ring-[#f4aa00] focus-within:border-[#f4aa00]">
           <SearchIcon className="text-gray-400 w-5 h-5 mr-3" />
           <span className="flex-1 text-gray-400 text-[16px]">Search Amazon</span>
