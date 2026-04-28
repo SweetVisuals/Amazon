@@ -16,6 +16,9 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
             <ArrowLeft className="w-6 h-6 text-gray-700" onClick={onBack} />
          </div>
          <div className="flex items-center gap-6 text-gray-600">
+            <div className="w-6 h-6 flex items-center justify-center">
+               <svg viewBox="0 0 24 24" className="w-5 h-5 text-blue-600" fill="currentColor"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2L12L9.5 9.5L12 2Z"/></svg>
+            </div>
             <Archive className="w-5 h-5" />
             <Trash2 className="w-5 h-5" />
             <Mail className="w-5 h-5" />
@@ -59,6 +62,66 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
                <MoreHorizontal className="w-5 h-5" />
             </div>
          </div>
+
+        {/* Gmail Order Widget */}
+        <div className="bg-[#e8f0fe] rounded-[24px] p-4 mb-4 flex flex-col gap-3 shadow-sm border border-[#d2e3fc]">
+            <div className="flex justify-between items-start">
+                <div className="flex-1 pr-2">
+                    <h2 className="text-[16px] font-bold text-[#041e49] line-clamp-2 leading-tight">
+                        {firstItem.title}
+                    </h2>
+                    <span className="text-[13px] text-[#444746] mt-1 block">
+                        {order?.order_items?.length || 1} item from Amazon
+                    </span>
+                </div>
+                <div className="w-[52px] h-[52px] bg-white rounded-[12px] flex items-center justify-center p-1 shadow-sm border border-[#e3e3e3] shrink-0 overflow-hidden">
+                    <img src={firstItem.image_url || firstItem.imageUrl} className="max-w-full max-h-full object-contain mix-blend-multiply" alt="product" />
+                </div>
+            </div>
+
+            <div className="mt-4">
+                <h1 className="text-[32px] text-[#041e49] leading-tight font-normal">
+                    Expected by<br />
+                    Wed, Apr 29
+                </h1>
+            </div>
+
+            <div className="flex flex-col gap-4 mt-2">
+                <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 flex items-center justify-center">
+                        <svg className="w-5 h-5 text-[#444746]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </div>
+                    <span className="text-[14px] text-[#1f1f1f]">Order placed · Estimate from Amazon</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 flex items-center justify-center text-[#444746] font-bold text-[20px]">
+                        #
+                    </div>
+                    <div>
+                        <div className="text-[13px] font-bold text-[#1f1f1f]">Order number</div>
+                        <div className="text-[14px] text-[#444746]">{orderNumber}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex gap-2 mt-2">
+                <button className="bg-[#0b57d0] text-white px-6 py-2.5 rounded-full font-medium text-[14px] flex-1">
+                    View order
+                </button>
+                <button className="bg-[#c2e7ff] text-[#041e49] px-6 py-2.5 rounded-full font-medium text-[14px] flex-1">
+                    View item
+                </button>
+            </div>
+        </div>
+
+        <div className="text-[12px] text-[#444746] flex items-center justify-between mb-6 px-1">
+            <span>Based on this email</span>
+            <div className="flex items-center gap-4">
+                <span>Correct?</span>
+                <button className="hover:bg-gray-100 p-1 rounded-full"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" /></svg></button>
+                <button className="hover:bg-gray-100 p-1 rounded-full"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="rotate-180"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" /></svg></button>
+            </div>
+        </div>
 
          {/* The actual Email body - rendering exactly like the screenshot */}
          <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
