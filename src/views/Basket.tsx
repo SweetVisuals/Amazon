@@ -1,5 +1,6 @@
 import React from 'react';
 import { CameraIcon, CheckCircleIcon, CheckSquareIcon, MicIcon, MinusIcon, PlusIcon, SearchIcon, TrashIcon } from '../components/Icons';
+import { getProductStats } from '../utils/stats';
 
 export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick, onCategoryClick }: { onCheckout: () => void, cartItems: any[], setCartItems: (items: any[]) => void, onProductClick: (p: any) => void, onCategoryClick: (q: string) => void }) => {
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -101,6 +102,22 @@ export const Basket = ({ onCheckout, cartItems, setCartItems, onProductClick, on
                              <h3 className="text-[15px] text-[#0f1111] leading-tight line-clamp-3 mb-1 cursor-pointer hover:text-[#007185] transition-colors" onClick={() => onProductClick(item)}>
                                {item.title}
                              </h3>
+                             {(() => {
+                               const stats = getProductStats(item.id, item.title);
+                               return (
+                                 <div className="flex flex-col gap-1 mb-2">
+                                   <div className="text-[12px] text-gray-500">{stats.orderCount} bought in past month</div>
+                                   <div className="flex items-center gap-2">
+                                     {stats.hasDiscount && (
+                                       <span className="bg-[#cc0c39] text-white text-[11px] px-1.5 py-0.5 rounded-sm font-bold">{stats.discount}% off</span>
+                                     )}
+                                     {stats.isLimitedTime && (
+                                       <span className="text-[#cc0c39] text-[11px] font-bold">Limited time deal</span>
+                                     )}
+                                   </div>
+                                 </div>
+                               );
+                             })()}
                              <div className="flex items-start mb-1">
                                 <span className="text-[20px] font-bold text-[#0f1111] leading-none">£{Math.floor(item.price).toLocaleString('en-GB')}</span>
                                 <span className="text-[12px] font-bold text-[#0f1111] leading-none pt-[1px]">{(item.price.toFixed(2).split('.')[1] || '00')}</span>

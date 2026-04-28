@@ -3,6 +3,7 @@ import { ArrowLeftIcon } from '../components/Icons';
 import { Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { getProductStats } from '../utils/stats';
 
 export const Checkout = ({ 
    onBack, 
@@ -174,38 +175,48 @@ export const Checkout = ({
             </label>
          </div>
 
-         {cartItems.map((item: any, index: number) => (
-             <div key={index} className="flex gap-4 p-4 bg-gray-50 border border-gray-200 rounded-[8px] mb-4">
-                <div className="w-[100px] shrink-0">
-                  {item.imageUrl ? <img src={item.imageUrl} className="w-[100px] h-[100px] object-contain mix-blend-multiply" /> : <div className="w-[100px] h-[100px] bg-white rounded"></div>}
-                </div>
-                <div className="flex-1 flex flex-col">
-                   <div className="text-[14px] text-[#0f1111] leading-tight font-medium line-clamp-4">
-                      {item.title}
-                   </div>
-                   <div className="text-[12px] text-gray-500 mt-1">300+ bought in past month</div>
-                   <div className="flex items-center gap-2 mt-1">
-                      <span className="bg-[#cc0c39] text-white text-[12px] px-1.5 py-0.5 rounded-sm font-bold">29% off</span>
-                      <span className="text-[#cc0c39] text-[12px] font-bold">Limited time deal</span>
-                   </div>
-                   <div className="text-[18px] font-bold text-[#0f1111] mt-1 mb-2">
-                       £{item.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                   </div>
-                   <div className="text-[14px] text-gray-700">Ships from Amazon EU Sarl</div>
-                   <div className="text-[14px] text-[#007185]">Sold by Amazon.co.uk</div>
-                   
-                   <div className="mt-3 flex items-center">
-                     <div className="border border-gray-300 rounded-full py-1.5 flex items-center gap-0 bg-white shadow-sm inline-flex divide-x divide-gray-300">
-                        <span className="text-[18px] px-3"><Trash2 className="w-5 h-5 text-[#007185]"/></span>
-                        <span className="text-[16px] px-4 font-bold">{item.quantity}</span>
-                        <span className="text-[20px] px-3 font-light leading-none">+</span>
+         {cartItems.map((item: any, index: number) => {
+             const stats = getProductStats(item.id, item.title);
+
+             return (
+               <div key={index} className="flex gap-4 p-4 bg-gray-50 border border-gray-200 rounded-[8px] mb-4">
+                  <div className="w-[100px] shrink-0">
+                    {item.imageUrl ? <img src={item.imageUrl} className="w-[100px] h-[100px] object-contain mix-blend-multiply" /> : <div className="w-[100px] h-[100px] bg-white rounded"></div>}
+                  </div>
+                  <div className="flex-1 flex flex-col">
+                     <div className="text-[14px] text-[#0f1111] leading-tight font-medium line-clamp-4">
+                        {item.title}
                      </div>
-                   </div>
-                   
-                   <div className="text-[#007185] mt-3">Add gift options</div>
-                </div>
-             </div>
-         ))}
+                     <div className="text-[12px] text-gray-500 mt-1">{stats.orderCount} bought in past month</div>
+                     
+                     <div className="flex items-center gap-2 mt-1">
+                        {stats.hasDiscount && (
+                          <span className="bg-[#cc0c39] text-white text-[12px] px-1.5 py-0.5 rounded-sm font-bold">{stats.discount}% off</span>
+                        )}
+                        {stats.isLimitedTime && (
+                          <span className="text-[#cc0c39] text-[12px] font-bold">Limited time deal</span>
+                        )}
+                     </div>
+                     
+                     <div className="text-[18px] font-bold text-[#0f1111] mt-1 mb-2">
+                         £{item.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                     </div>
+                     <div className="text-[14px] text-gray-700">Ships from Amazon EU Sarl</div>
+                     <div className="text-[14px] text-[#007185]">Sold by Amazon.co.uk</div>
+                     
+                     <div className="mt-3 flex items-center">
+                       <div className="border border-gray-300 rounded-full py-1.5 flex items-center gap-0 bg-white shadow-sm inline-flex divide-x divide-gray-300">
+                          <span className="text-[18px] px-3"><Trash2 className="w-5 h-5 text-[#007185]"/></span>
+                          <span className="text-[16px] px-4 font-bold">{item.quantity}</span>
+                          <span className="text-[20px] px-3 font-light leading-none">+</span>
+                       </div>
+                     </div>
+                     
+                     <div className="text-[#007185] mt-3">Add gift options</div>
+                  </div>
+               </div>
+             );
+         })}
 
          <div className="mt-4 text-[14px]">
             To reduce packaging, the item is often dispatched in manufacturer's box, which reveals what's inside. To change, click below.

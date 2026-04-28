@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SearchIcon, ArrowLeftIcon, CartIcon } from '../components/Icons';
 import { Share as ShareIcon } from 'lucide-react';
+import { getProductStats } from '../utils/stats';
 
 export const Product = ({ 
   product, 
@@ -71,9 +72,26 @@ export const Product = ({
             </div>
          </div>
 
-         <h1 className="text-[16px] text-[#0f1111] leading-snug mb-3 font-medium">
+         <h1 className="text-[16px] text-[#0f1111] leading-snug mb-1 font-medium">
             {product.title}
          </h1>
+
+         {(() => {
+           const stats = getProductStats(product.id, product.title);
+           return (
+             <>
+               <div className="text-[12px] text-gray-500 mb-2">{stats.orderCount} bought in past month</div>
+               <div className="flex items-center gap-2 mb-3">
+                 {stats.hasDiscount && (
+                   <span className="bg-[#cc0c39] text-white text-[12px] px-1.5 py-0.5 rounded-sm font-bold">{stats.discount}% off</span>
+                 )}
+                 {stats.isLimitedTime && (
+                   <span className="text-[#cc0c39] text-[12px] font-bold">Limited time deal</span>
+                 )}
+               </div>
+             </>
+           );
+         })()}
 
          <div className="relative w-full aspect-square bg-[#f0f2f5] rounded-xl overflow-hidden mb-4 flex items-center justify-center p-4">
             {product.imageUrl ? (
