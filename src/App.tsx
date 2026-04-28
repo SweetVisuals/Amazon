@@ -188,7 +188,17 @@ export default function App() {
     }
     
     if (currentView === 'checkout') {
-      return <Checkout onBack={() => setCurrentView('main')} onComplete={() => setCurrentView('success')} savedCards={savedCards} cartItems={cartItems} deliveryInfo={deliveryInfo} />;
+      return <Checkout 
+               onBack={() => setCurrentView('main')} 
+               onComplete={(order) => { 
+                 setCartItems([]);
+                 setSelectedOrder(order);
+                 setCurrentView('tracking');
+               }} 
+               savedCards={savedCards} 
+               cartItems={cartItems} 
+               deliveryInfo={deliveryInfo} 
+             />;
     }
 
     if (currentView === 'success') {

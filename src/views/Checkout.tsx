@@ -12,7 +12,7 @@ export const Checkout = ({
    deliveryInfo
 }: { 
    onBack: () => void, 
-   onComplete: () => void, 
+   onComplete: (order: any) => void, 
    savedCards?: any[],
    cartItems?: any[],
    deliveryInfo?: any
@@ -57,13 +57,16 @@ export const Checkout = ({
     }));
 
     const { error: itemsError } = await supabase.from('order_items').insert(itemsToInsert);
-
+    
     if (itemsError) {
        console.error("Error inserting items:", itemsError);
     }
 
+    // Add a 2 second artificial delay for processing simulation
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     setPlacingOrder(false);
-    onComplete(); // clears cart and navigates and shows success
+    onComplete(orderData); // pass the order data back
   };
 
   if (authLoading) {
@@ -219,7 +222,12 @@ export const Checkout = ({
              disabled={placingOrder}
              className="w-full bg-[#FFD814] hover:bg-[#F7CA00] border border-[#FCD200] text-[#0f1111] py-3 rounded-full font-medium text-[16px] shadow-sm disabled:opacity-70"
           >
-            {placingOrder ? 'Processing...' : 'Buy now'}
+            {placingOrder ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                <span>Processing...</span>
+              </div>
+            ) : 'Buy now'}
           </button>
           
           <div className="text-[13px] text-[#565959] leading-snug mt-4">
