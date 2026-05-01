@@ -9,10 +9,12 @@ export const getProductStats = (id: string, title?: string) => {
   const discounts = [5, 8, 10, 13, 15, 20, 25, 30];
   const orderCounts = ['50+', '100+', '200+', '300+', '500+', '1K+', '2K+'];
   
-  const hasDiscount = (seed % 3) !== 0; // 66% chance of having a discount
+  const lowerTitle = title?.toLowerCase() || '';
+  const isIPhone = lowerTitle.startsWith('iphone') || lowerTitle.startsWith('apple iphone');
+  const hasDiscount = isIPhone ? false : (seed % 3) !== 0; // 66% chance of having a discount, except for iPhones
   const discount = discounts[seed % discounts.length];
   const orderCount = orderCounts[seed % orderCounts.length];
-  const isLimitedTime = (seed % 2) === 0;
+  const isLimitedTime = isIPhone ? false : (seed % 2) === 0;
   
   return {
     hasDiscount,
