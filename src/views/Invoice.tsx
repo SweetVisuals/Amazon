@@ -3,10 +3,14 @@ import { ArrowLeft, Check, Reply, Forward, SmilePlus, Lock, Inbox, AlertCircle, 
 
 export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) => {
   const firstItem = order?.order_items?.[0] || { title: 'Order Confirmation' };
-  const date = order?.created_at ? new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'Apr 26';
+  const date = order?.created_at ? new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'May 1';
   const fullName = order?.delivery_address?.name || 'NICOLAS';
   const orderNumber = order?.id?.slice(0, 8).toUpperCase() || '202-5371485-8987523';
   const totalAmount = order?.total_amount || 0;
+  
+  const estimatedDeliveryDate = order?.estimated_delivery_date ? new Date(order.estimated_delivery_date) : null;
+  const formattedEstimatedDate = estimatedDeliveryDate ? estimatedDeliveryDate.toLocaleDateString('en-GB', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Wed, May 3';
+  const arrivingDay = estimatedDeliveryDate ? estimatedDeliveryDate.toLocaleDateString('en-GB', { weekday: 'long' }) : 'Wednesday';
 
   return (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto">
@@ -82,7 +86,7 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
             <div className="mt-4">
                 <h1 className="text-[32px] text-[#041e49] leading-tight font-normal">
                     Expected by<br />
-                    Wed, Apr 29
+                    {formattedEstimatedDate}
                 </h1>
             </div>
 
@@ -174,7 +178,7 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
                <hr className="border-t border-gray-300 mb-6" />
 
                <div className="mb-6">
-                  <h3 className="text-[18px] font-bold text-gray-900">Arriving Wednesday</h3>
+                  <h3 className="text-[18px] font-bold text-gray-900">Arriving {arrivingDay}</h3>
                   <div className="text-[16px] font-bold text-gray-900 mt-1">{fullName.toUpperCase()}</div>
                   <div className="text-[15px] text-gray-900 mt-1">Order # {orderNumber}</div>
                </div>
@@ -201,10 +205,20 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
                  </div>
                ))}
 
-               {/* Total */}
-               <div className="flex justify-between items-center py-4 border-t border-gray-300 mt-2">
-                  <span className="text-[16px] text-gray-900">Total</span>
-                  <span className="text-[16px] font-bold text-gray-900">£{totalAmount.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+               {/* Total Breakdown */}
+               <div className="border-t border-gray-300 mt-2 pt-4 flex flex-col gap-2">
+                  <div className="flex justify-between items-center text-[14px] text-gray-600">
+                     <span>Items:</span>
+                     <span>£{(totalAmount - (order?.shipping_cost || 0)).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[14px] text-gray-600">
+                     <span>Shipping & Handling:</span>
+                     <span>£{(order?.shipping_cost || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 mt-2 border-t border-gray-100">
+                     <span className="text-[16px] font-bold text-[#B12704]">Order Total:</span>
+                     <span className="text-[16px] font-bold text-[#B12704]">£{totalAmount.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
                </div>
             </div>
          </div>

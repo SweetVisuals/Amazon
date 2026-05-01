@@ -6,6 +6,9 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
   const firstItem = order?.order_items?.[0] || {};
   const imageUrl = firstItem.imageUrl || firstItem.image_url || 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SY200_.jpg';
   const address = order?.delivery_address || { name: 'NICOLAS K THEATO', addressLine1: '20, LIMES AVENUE', addressLine2: 'LONDON, SW13 0HF', country: 'United Kingdom' };
+  
+  const estimatedDeliveryDate = order?.estimated_delivery_date ? new Date(order.estimated_delivery_date) : null;
+  const formattedDeliveryDate = estimatedDeliveryDate ? estimatedDeliveryDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }) : 'tomorrow by\n10 PM';
 
   return (
     <div className="flex flex-col h-full bg-[#EAEDED] z-50 absolute inset-0 overflow-y-auto pb-10">
@@ -26,7 +29,7 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
           <div className="bg-white px-4 py-4 pt-6 mb-2 border-b border-gray-200 flex flex-col items-start gap-2">
                <div className="flex justify-between items-start w-full">
                    <h2 className="text-[22px] font-bold text-[#0f1111] leading-tight">
-                       {order?.status === 'PENDING' ? 'Processing' : 'Arriving tomorrow by\n10 PM'}
+                       {order?.status === 'PENDING' ? 'Processing' : `Arriving ${formattedDeliveryDate}`}
                    </h2>
                    <span onClick={onBack} className="text-[#007185] font-medium text-[14px] cursor-pointer hover:underline">See all orders</span>
                </div>

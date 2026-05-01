@@ -19,7 +19,42 @@ export const Checkout = ({
    deliveryInfo?: any
 }) => {
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [selectedDelivery, setSelectedDelivery] = useState('standard');
   const { profile, loading: authLoading } = useAuth();
+
+  const today = new Date();
+  const deliveryDates = {
+    premium: new Date(new Date().setDate(today.getDate() + 2)),
+    standard: new Date(new Date().setDate(today.getDate() + 4)),
+    express: new Date(new Date().setDate(today.getDate() + 3)),
+  };
+
+  const deliveryOptions = [
+    { 
+      id: 'express', 
+      label: 'Fast, FREE delivery with Prime', 
+      date: deliveryDates.express, 
+      price: 0, 
+      isPrime: true,
+      description: 'select to learn more'
+    },
+    { 
+      id: 'standard', 
+      label: 'FREE Standard Delivery', 
+      date: deliveryDates.standard, 
+      price: 0,
+      isPrime: false
+    },
+    { 
+      id: 'premium', 
+      label: 'Premium Delivery', 
+      date: deliveryDates.premium, 
+      price: 4.99,
+      isPrime: false
+    }
+  ];
+
+  const selectedOption = deliveryOptions.find(opt => opt.id === selectedDelivery) || deliveryOptions[1];
 
   const handlePlaceOrder = async () => {
     if (!profile) {
@@ -29,14 +64,19 @@ export const Checkout = ({
     setPlacingOrder(true);
     
     // Insert order
-    const totalAmount = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const totalAmount = subtotal + selectedOption.price;
+    
     const { data: orderData, error: orderError } = await supabase
       .from('orders')
       .insert({
-        user_id: profile.id, // Using profile ID (guest or real)
+        user_id: profile.id,
         total_amount: totalAmount,
         status: 'PENDING',
         delivery_address: deliveryInfo || { name: 'Default Delivery' },
+        shipping_method: selectedOption.id.toUpperCase(),
+        shipping_cost: selectedOption.price,
+        estimated_delivery_date: selectedOption.date.toISOString(),
       })
       .select()
       .single();
@@ -94,14 +134,14 @@ export const Checkout = ({
       </div>
 
       <div className="bg-white px-4 py-4 mb-2 shadow-sm border-y border-gray-200">
-          <div className="border-[2px] border-[#007185] rounded-[8px] p-4 flex items-start mb-4">
-              <input type="checkbox" className="w-[18px] h-[18px] mt-[2px] mr-3 border-gray-400 rounded-sm text-[#007185] focus:ring-[#007185]" />
+          <div className="bg-white p-4 flex items-start mb-4 shadow-sm">
+              <input type="checkbox" className="w-[18px] h-[18px] mt-[2px] mr-3 rounded-sm text-[#007185] focus:ring-[#007185]" />
               <div className="text-[15px] text-[#0f1111] leading-snug">
                   Tick this box to default to these delivery and payment options in the future.
               </div>
           </div>
           
-          <div className="border-l-4 border-[#ff9900] bg-white border-y border-r border-y-gray-200 border-r-gray-200 rounded-r-[8px] p-3 flex flex-col shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
+          <div className="bg-white p-3 flex flex-col shadow-sm rounded-lg">
               <h3 className="text-[15px] font-medium text-[#007185] underline line-clamp-1">
                   Signature or one-time password required at time of delivery
               </h3>
@@ -145,41 +185,45 @@ export const Checkout = ({
       </div>
 
       <div className="bg-white px-4 py-4 mb-4 shadow-sm border-y border-gray-200">
-         <h2 className="text-[18px] font-bold text-[#0f1111] mb-1">Arriving 29 Apr 2026</h2>
+         <h2 className="text-[18px] font-bold text-[#0f1111] mb-1">
+           Arriving {selectedOption.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+         </h2>
          <p className="text-[15px] mb-3">If you order in the next 2 hours and 9 minutes</p>
 
          <div className="flex flex-col gap-3 mb-6">
-            <label className="flex items-start gap-3">
-               <input type="radio" name="delivery" className="mt-1 w-[18px] h-[18px] text-[#007185]" />
-               <div>
-                  <div className="font-bold text-[15px]">Monday 27 Apr</div>
-                  <div className="border border-green-600 rounded p-1.5 mt-1 text-[15px] text-[#0f1111]">
-                     <span className="text-[#058265] font-bold">Fast, FREE delivery with Prime. </span>
-                       select to learn more <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Amazon_Prime_Logo.svg/3840px-Amazon_Prime_Logo.svg.png" className="h-[14px] ml-1 inline-block object-contain" alt="prime" />
-                  </div>
-               </div>
-            </label>
-            <label className="flex items-start gap-3">
-               <input type="radio" name="delivery" defaultChecked className="mt-1 w-[18px] h-[18px] text-[#007185]" />
-               <div className="leading-tight">
-                  <div className="font-bold text-[15px]">Wednesday 29 Apr</div>
-                  <div className="text-[15px] text-gray-700">FREE Standard Delivery</div>
-               </div>
-            </label>
-            <label className="flex items-start gap-3">
-               <input type="radio" name="delivery" className="mt-1 w-[18px] h-[18px] text-[#007185]" />
-               <div className="leading-tight">
-                  <div className="font-bold text-[15px]">Tomorrow, 27 Apr</div>
-                  <div className="text-[15px] text-gray-700">£4.99 Premium Delivery</div>
-               </div>
-            </label>
+            {deliveryOptions.map((option) => (
+              <label key={option.id} className="flex items-start gap-3 cursor-pointer group">
+                 <input 
+                    type="radio" 
+                    name="delivery" 
+                    checked={selectedDelivery === option.id}
+                    onChange={() => setSelectedDelivery(option.id)}
+                    className="mt-1 w-[18px] h-[18px] text-[#007185] border-gray-300 focus:ring-[#007185]" 
+                 />
+                 <div className="leading-tight">
+                    <div className="font-bold text-[15px] text-[#0f1111]">
+                      {option.date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })}
+                    </div>
+                    {option.isPrime ? (
+                      <div className="bg-green-50 rounded p-1.5 mt-1 text-[15px] text-[#0f1111] shadow-sm">
+                         <span className="text-[#058265] font-bold">{option.label}. </span>
+                         {option.description} <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Amazon_Prime_Logo.svg/3840px-Amazon_Prime_Logo.svg.png" className="h-[14px] ml-1 inline-block object-contain" alt="prime" />
+                      </div>
+                    ) : (
+                      <div className="text-[15px] text-gray-700 mt-0.5">
+                        {option.price > 0 ? `£${option.price.toFixed(2)} ${option.label}` : option.label}
+                      </div>
+                    )}
+                 </div>
+              </label>
+            ))}
          </div>
 
          {cartItems.map((item: any, index: number) => {
              const stats = getProductStats(item.id, item.title);
 
              return (
-               <div key={index} className="flex gap-4 p-4 bg-gray-50 border border-gray-200 rounded-[8px] mb-4">
+               <div key={index} className="flex gap-4 p-4 bg-gray-50 rounded-[12px] mb-4 shadow-sm">
                   <div className="w-[100px] shrink-0">
                     {item.imageUrl ? <img src={item.imageUrl} className="w-[100px] h-[100px] object-contain mix-blend-multiply" /> : <div className="w-[100px] h-[100px] bg-white rounded"></div>}
                   </div>
@@ -231,7 +275,7 @@ export const Checkout = ({
           <button 
              onClick={handlePlaceOrder}
              disabled={placingOrder}
-             className="w-full bg-[#FFD814] hover:bg-[#F7CA00] border border-[#FCD200] text-[#0f1111] py-3 rounded-full font-medium text-[16px] shadow-sm disabled:opacity-70"
+             className="w-full bg-[#FFD814] hover:bg-[#F7CA00] text-[#0f1111] py-3 rounded-full font-medium text-[16px] shadow-md disabled:opacity-70"
           >
             {placingOrder ? (
               <div className="flex items-center justify-center space-x-2">
