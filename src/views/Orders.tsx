@@ -132,22 +132,27 @@ export const Orders = ({ onNavigate, onBack }: { onNavigate: (v: any, data?: any
             const imageUrl = firstItem.image_url || 'https://m.media-amazon.com/images/I/6182S7MYC2L._AC_SY200_.jpg';
             const date = new Date(order.created_at).toLocaleDateString();
 
-            return (
-               <div key={order.id} className="border border-gray-300 rounded-[8px] p-4 flex gap-4 cursor-pointer" onClick={() => onNavigate('tracking', order)}>
-                 <div className="w-[80px] shrink-0 flex items-center justify-center">
-                     <img src={imageUrl} className="w-[80px] h-[80px] object-contain mix-blend-multiply" alt="product" />
-                 </div>
-                 <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="font-bold text-[16px] text-[#0f1111] mb-1">{order.status === 'PENDING' ? 'Processing' : order.status}</h3>
-                    <p className="text-[14px] text-gray-800 leading-snug line-clamp-2">
-                       {itemTitle}
-                    </p>
-                    <p className="text-[13px] text-gray-500 mt-1">
-                       Placed on {date}
-                    </p>
-                 </div>
-               </div>
-            );
+             return (
+                <div key={order.id} className="bg-white rounded-[8px] p-4 flex gap-4 cursor-pointer shadow-sm hover:shadow-md transition-shadow" onClick={() => onNavigate('tracking', order)}>
+                  <div className="w-[80px] shrink-0 flex items-center justify-center">
+                      <img src={imageUrl} className="w-[80px] h-[80px] object-contain mix-blend-multiply" alt="product" />
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center">
+                     <h3 className={`font-bold text-[16px] mb-1 ${order.status === 'DELIVERED' ? 'text-green-700' : 'text-[#0f1111]'}`}>
+                        {order.status === 'PENDING' ? 'Processing' : 
+                         order.status === 'SHIPPED' ? 'Arriving soon' : 
+                         order.status === 'DELIVERED' ? 'Delivered' : 
+                         order.status === 'CANCELLED' ? 'Cancelled' : order.status}
+                     </h3>
+                     <p className="text-[14px] text-gray-800 leading-snug line-clamp-2">
+                        {itemTitle}
+                     </p>
+                     <p className="text-[13px] text-gray-500 mt-1">
+                        Placed on {date}
+                     </p>
+                  </div>
+                </div>
+             );
          })}
       </div>
     </div>

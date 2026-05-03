@@ -145,34 +145,44 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
                </h2>
 
                {/* Progress tracker */}
-               <div className="relative mb-10 w-[95%] mx-auto">
-                   <div className="absolute top-[9px] left-0 right-0 h-[3px] bg-gray-200 rounded-full z-0" />
-                   <div className="absolute top-[9px] left-0 w-[15%] h-[3px] bg-[#008296] rounded-l-full z-10" />
-                   
-                   <div className="relative z-20 flex justify-between items-start">
-                       <div className="flex flex-col items-center w-1/4">
-                           <div className="w-5 h-5 rounded-full bg-[#008296] text-white flex items-center justify-center">
-                              <Check className="w-3 h-3 stroke-[3]" />
-                           </div>
-                           <span className="text-[14px] font-bold text-gray-900 mt-2 text-center">Ordered</span>
-                       </div>
-                       <div className="flex flex-col items-center w-1/4">
-                           <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
-                           </div>
-                           <span className="text-[14px] text-gray-600 mt-2 text-center">Dispatched</span>
-                       </div>
-                       <div className="flex flex-col items-center w-1/4">
-                           <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
-                           </div>
-                           <span className="text-[14px] text-gray-600 mt-2 text-center">Out for<br/>delivery</span>
-                       </div>
-                       <div className="flex flex-col items-center w-1/4">
-                           <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
-                           </div>
-                           <span className="text-[14px] text-gray-600 mt-2 text-center">Delivered</span>
-                       </div>
-                   </div>
-               </div>
+                <div className="relative mb-10 w-[95%] mx-auto">
+                    <div className="absolute top-[9px] left-0 right-0 h-[3px] bg-gray-200 rounded-full z-0" />
+                    <div 
+                      className="absolute top-[9px] left-0 h-[3px] bg-[#008296] rounded-l-full z-10 transition-all duration-500" 
+                      style={{ 
+                        width: order?.status === 'DELIVERED' ? '100%' : 
+                               order?.status === 'SHIPPED' ? '66%' : 
+                               order?.status === 'PROCESSING' ? '33%' : '20%' 
+                      }}
+                    />
+                    
+                    <div className="relative z-20 flex justify-between items-start">
+                        <div className="flex flex-col items-center w-1/4">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) ? 'bg-[#008296] text-white' : 'bg-gray-200'}`}>
+                               {['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) && <Check className="w-3 h-3 stroke-[3]" />}
+                            </div>
+                            <span className={`text-[14px] mt-2 text-center transition-colors ${['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) ? 'font-bold text-gray-900' : 'text-gray-600'}`}>Ordered</span>
+                        </div>
+                        <div className="flex flex-col items-center w-1/4">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) ? 'bg-[#008296] text-white' : 'bg-gray-200'}`}>
+                               {['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) && <Check className="w-3 h-3 stroke-[3]" />}
+                            </div>
+                            <span className={`text-[14px] mt-2 text-center transition-colors ${['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) ? 'font-bold text-gray-900' : 'text-gray-600'}`}>Dispatched</span>
+                        </div>
+                        <div className="flex flex-col items-center w-1/4">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${['SHIPPED', 'DELIVERED'].includes(order?.status) ? 'bg-[#008296] text-white' : 'bg-gray-200'}`}>
+                               {['SHIPPED', 'DELIVERED'].includes(order?.status) && <Check className="w-3 h-3 stroke-[3]" />}
+                            </div>
+                            <span className={`text-[14px] mt-2 text-center transition-colors ${['SHIPPED', 'DELIVERED'].includes(order?.status) ? 'font-bold text-gray-900' : 'text-gray-600'}`}>Out for<br/>delivery</span>
+                        </div>
+                        <div className="flex flex-col items-center w-1/4">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${order?.status === 'DELIVERED' ? 'bg-[#008296] text-white' : 'bg-gray-200'}`}>
+                               {order?.status === 'DELIVERED' && <Check className="w-3 h-3 stroke-[3]" />}
+                            </div>
+                            <span className={`text-[14px] mt-2 text-center transition-colors ${order?.status === 'DELIVERED' ? 'font-bold text-gray-900' : 'text-gray-600'}`}>Delivered</span>
+                        </div>
+                    </div>
+                </div>
 
                {/* Order Details text */}
                <hr className="border-t border-gray-300 mb-6" />

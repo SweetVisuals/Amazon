@@ -48,32 +48,47 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
           </div>
 
           <div className="bg-white mb-2 border-y border-gray-200 pt-6 pb-6 w-full flex flex-col items-center shadow-sm">
-               <h3 className="text-[18px] font-bold text-[#0f1111] mb-6 self-start px-4 w-full">Ordered</h3>
+               <h3 className="text-[18px] font-bold text-[#0f1111] mb-6 self-start px-4 w-full">
+                 {order?.status === 'DELIVERED' ? 'Delivered' : order?.status === 'CANCELLED' ? 'Cancelled' : 'Track Package'}
+               </h3>
                
                 <div className="w-[85%] mx-auto relative h-8 flex items-center justify-between z-0 mb-6 mt-2">
                     <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 -mt-0.5 rounded-full z-[-1]" />
-                    <div className="absolute top-1/2 left-0 w-[20%] h-1.5 bg-[#007185] -mt-0.5 rounded-l-full z-[-1]" />
+                    <div 
+                      className="absolute top-1/2 left-0 h-1.5 bg-[#007185] -mt-0.5 rounded-l-full z-[-1] transition-all duration-500" 
+                      style={{ 
+                        width: order?.status === 'DELIVERED' ? '100%' : 
+                               order?.status === 'SHIPPED' ? '66%' : 
+                               order?.status === 'PROCESSING' ? '33%' : '20%' 
+                      }}
+                    />
                    
                    <div className="flex flex-col items-center relative">
-                       <div className="w-5 h-5 bg-[#007185] rounded-full flex items-center justify-center ring-4 ring-white">
+                       <div className={`w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-white transition-colors duration-300 ${['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) ? 'bg-[#007185]' : 'bg-gray-200 border border-gray-300'}`}>
                           <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                        </div>
                        <span className="text-[13px] font-bold text-[#007185] absolute top-7 w-20 text-center">Ordered</span>
                    </div>
                    
                    <div className="flex flex-col items-center relative">
-                       <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center ring-4 ring-white border border-gray-300"></div>
-                       <span className="text-[13px] font-medium text-gray-500 absolute top-7 w-20 text-center">Shipped</span>
+                       <div className={`w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-white transition-colors duration-300 ${['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) ? 'bg-[#007185]' : 'bg-gray-200 border border-gray-300'}`}>
+                          {['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                       </div>
+                       <span className={`text-[13px] absolute top-7 w-20 text-center transition-colors ${['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(order?.status) ? 'font-bold text-[#007185]' : 'font-medium text-gray-500'}`}>Shipped</span>
                    </div>
 
                    <div className="flex flex-col items-center relative">
-                       <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center ring-4 ring-white border border-gray-300"></div>
-                       <span className="text-[13px] font-medium text-gray-500 absolute top-7 w-24 text-center">Out for<br/>delivery</span>
+                       <div className={`w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-white transition-colors duration-300 ${['SHIPPED', 'DELIVERED'].includes(order?.status) ? 'bg-[#007185]' : 'bg-gray-200 border border-gray-300'}`}>
+                          {['SHIPPED', 'DELIVERED'].includes(order?.status) && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                       </div>
+                       <span className={`text-[13px] absolute top-7 w-24 text-center transition-colors ${['SHIPPED', 'DELIVERED'].includes(order?.status) ? 'font-bold text-[#007185]' : 'font-medium text-gray-500'}`}>Out for<br/>delivery</span>
                    </div>
 
-                   <div className="flex flex-col items-center relative gap-1.5">
-                       <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center ring-4 ring-white border border-gray-300"></div>
-                       <span className="text-[13px] font-medium text-gray-500 absolute top-7 text-center">Delivered</span>
+                   <div className="flex flex-col items-center relative">
+                       <div className={`w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-white transition-colors duration-300 ${order?.status === 'DELIVERED' ? 'bg-[#007185]' : 'bg-gray-200 border border-gray-300'}`}>
+                          {order?.status === 'DELIVERED' && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                       </div>
+                       <span className={`text-[13px] absolute top-7 text-center transition-colors ${order?.status === 'DELIVERED' ? 'font-bold text-[#007185]' : 'font-medium text-gray-500'}`}>Delivered</span>
                    </div>
                </div>
 

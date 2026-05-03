@@ -28,6 +28,44 @@ export const Admin = ({
   const [showVariantBuilder, setShowVariantBuilder] = useState(false);
   const [newVariantType, setNewVariantType] = useState('Size');
   const [newVariantOptions, setNewVariantOptions] = useState('');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'content'>('products');
+  const [adminOrders, setAdminOrders] = useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  const fetchAllOrders = async () => {
+    setOrdersLoading(true);
+    const { supabase } = await import('../lib/supabase');
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        order_items (*)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (data) setAdminOrders(data);
+    setOrdersLoading(false);
+  };
+
+  React.useEffect(() => {
+    if (activeTab === 'orders') {
+      fetchAllOrders();
+    }
+  }, [activeTab]);
+
+  const updateOrderStatus = async (orderId: string, newStatus: string) => {
+    const { supabase } = await import('../lib/supabase');
+    const { error } = await supabase
+      .from('orders')
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .eq('id', orderId);
+
+    if (error) {
+      alert("Error updating order: " + error.message);
+    } else {
+      setAdminOrders(adminOrders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    }
+  };
 
   const handleAddCard = (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,11 +174,156 @@ export const Admin = ({
         <span className="text-[18px] font-bold text-[#0f1111]">Admin Dashboard</span>
       </div>
 
-      <div className="p-4 flex flex-col gap-6">
+      {/* Tabs */}
+      <div className="bg-white flex px-2 sticky top-0 z-20 shadow-sm">
+         <button 
+           onClick={() => setActiveTab('products')}
+           className={`px-4 py-3 text-[14px] font-bold border-b-2 transition-colors ${activeTab === 'products' ? 'border-[#e47911] text-[#e47911]' : 'border-transparent text-gray-600'}`}
+         >
+           Products
+         </button>
+         <button 
+           onClick={() => setActiveTab('orders')}
+           className={`px-4 py-3 text-[14px] font-bold border-b-2 transition-colors ${activeTab === 'orders' ? 'border-[#e47911] text-[#e47911]' : 'border-transparent text-gray-600'}`}
+         >
+           Orders
+         </button>
+         <button 
+           onClick={() => setActiveTab('content')}
+           className={`px-4 py-3 text-[14px] font-bold border-b-2 transition-colors ${activeTab === 'content' ? 'border-[#e47911] text-[#e47911]' : 'border-transparent text-gray-600'}`}
+         >
+           Content & Info
+         </button>
+      </div>
 
-        {/* Saved Cards Admin */}
-        <div className="bg-white p-4 rounded-[8px] shadow-sm">
-           <h3 className="font-bold text-[18px] mb-4">Manage Saved Cards</h3>
+      <div className="p-4 flex flex-col gap-6">
+        {activeTab === 'products' && (
+          <>
+            {/* Products Admin Wizard Grid */}
+            <div className="bg-white p-4 rounded-[8px] shadow-sm">
+               <div className="flex justify-between items-center mb-4">
+                   <h3 className="font-bold text-[18px]">Product Wizard</h3>
+               </div>
+               
+               <div className="grid grid-cols-2 gap-3">
+                  {/* Add Product Tile */}
+                  <div 
+                     onClick={() => openWizard()}
+                     className="border-2 border-dashed border-[#007185] bg-[#f0f9fa] rounded-lg aspect-square flex flex-col items-center justify-center cursor-pointer hover:bg-[#e0f3f5] transition-colors"
+                  >
+                     <Plus className="w-8 h-8 text-[#007185] mb-2" />
+                     <span className="font-medium text-[#007185] text-[14px]">Add Product</span>
+                  </div>
+
+                  {/* Existing Products */}
+                  {products.map((p: any) => (
+                      <div 
+                         key={p.id} 
+                         onClick={() => openWizard(p)}
+                         className="relative border border-gray-200 rounded-lg aspect-square flex flex-col bg-white overflow-hidden cursor-pointer hover:shadow-md transition-shadow group"
+                      >
+                         <button 
+                            onClick={(e) => deleteProduct(p.id, e)}
+                            className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm z-10 w-7 h-7 flex items-center justify-center border border-gray-100 text-red-500 hover:bg-red-50"
+                         >
+                            <X className="w-4 h-4" />
+                         </button>
+                         
+                         <div className="h-1/2 bg-[#f0f2f5] w-full flex items-center justify-center relative">
+                            {p.imageUrl ? (
+                               <img src={p.imageUrl} className="max-w-full max-h-full object-contain mix-blend-multiply p-1" />
+                            ) : (
+                               <span className="text-gray-400 text-xs">No Image</span>
+                            )}
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Edit2 className="w-6 h-6 text-white" />
+                            </div>
+                         </div>
+                         <div className="p-2 flex flex-col flex-1 border-t border-gray-100">
+                             <span className="text-[12px] font-medium line-clamp-2 text-[#0f1111] mb-1">{p.title}</span>
+                             <span className="text-[14px] font-bold text-[#0f1111] mt-auto">£{p.price.toFixed(2)}</span>
+                         </div>
+                      </div>
+                  ))}
+               </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'orders' && (
+          <div className="flex flex-col gap-4">
+             <div className="flex justify-between items-center">
+                <h3 className="font-bold text-[18px]">Manage Orders</h3>
+                <button onClick={fetchAllOrders} className="text-[#007185] text-[13px] font-medium">Refresh</button>
+             </div>
+
+             {ordersLoading && <div className="text-center py-10 text-gray-500">Loading orders...</div>}
+             
+             {!ordersLoading && adminOrders.length === 0 && (
+                <div className="bg-white p-8 rounded-lg shadow-sm text-center text-gray-500">
+                   No orders found.
+                </div>
+             )}
+
+             {adminOrders.map((order) => {
+                const firstItem = order.order_items?.[0] || {};
+                const date = new Date(order.created_at).toLocaleDateString();
+                
+                return (
+                   <div key={order.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                      <div className="bg-gray-50 p-3 flex justify-between items-center">
+                         <div className="flex flex-col">
+                            <span className="text-[11px] font-bold text-gray-500 uppercase">Order Placed</span>
+                            <span className="text-[13px] text-gray-700">{date}</span>
+                         </div>
+                         <div className="flex flex-col items-end">
+                            <span className="text-[11px] font-bold text-gray-500 uppercase">Total</span>
+                            <span className="text-[13px] font-bold text-[#0f1111]">£{order.total_amount?.toFixed(2)}</span>
+                         </div>
+                      </div>
+                      
+                      <div className="p-3">
+                         <div className="flex gap-3 mb-4">
+                            <div className="w-16 h-16 bg-gray-50 rounded flex items-center justify-center p-1">
+                               <img src={firstItem.image_url || firstItem.imageUrl} className="max-w-full max-h-full object-contain mix-blend-multiply" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                               <h4 className="text-[14px] font-medium text-[#0f1111] line-clamp-1">{firstItem.title}</h4>
+                               <p className="text-[12px] text-gray-500 mt-0.5">Order ID: {order.id.slice(0,8).toUpperCase()}</p>
+                               <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase bg-blue-50 text-blue-700">
+                                  {order.status}
+                               </div>
+                            </div>
+                         </div>
+
+                         <div className="flex flex-col gap-2 pt-3">
+                            <label className="text-[12px] font-bold text-gray-700">Update Status</label>
+                            <div className="flex gap-2">
+                               <select 
+                                 value={order.status}
+                                 onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                                 className="flex-1 rounded p-2 text-[14px] bg-[#F0F2F2] focus:ring-2 focus:ring-[#f4aa00] outline-none"
+                               >
+                                  <option value="PENDING">PENDING</option>
+                                  <option value="PROCESSING">PROCESSING</option>
+                                  <option value="SHIPPED">SHIPPED</option>
+                                  <option value="DELIVERED">DELIVERED</option>
+                                  <option value="CANCELLED">CANCELLED</option>
+                               </select>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                );
+             })}
+          </div>
+        )}
+
+        {activeTab === 'content' && (
+          <>
+            {/* Saved Cards Admin */}
+            <div className="bg-white p-4 rounded-[8px] shadow-sm">
+               <h3 className="font-bold text-[18px] mb-4">Manage Saved Cards</h3>
            <form onSubmit={handleAddCard} className="flex flex-col gap-3">
               <select 
                 value={cardBrand} 
@@ -472,59 +655,12 @@ export const Admin = ({
                     ))}
                  </div>
               </div>
-           </div>
-        </div>
+            </div>
+         </div>
+       </>
+     )}
 
-        {/* Products Admin Wizard Grid */}
-        <div className="bg-white p-4 rounded-[8px] shadow-sm">
-           <div className="flex justify-between items-center mb-4">
-               <h3 className="font-bold text-[18px]">Product Wizard</h3>
-           </div>
-           
-           <div className="grid grid-cols-2 gap-3">
-              {/* Add Product Tile */}
-              <div 
-                 onClick={() => openWizard()}
-                 className="border-2 border-dashed border-[#007185] bg-[#f0f9fa] rounded-lg aspect-square flex flex-col items-center justify-center cursor-pointer hover:bg-[#e0f3f5] transition-colors"
-              >
-                 <Plus className="w-8 h-8 text-[#007185] mb-2" />
-                 <span className="font-medium text-[#007185] text-[14px]">Add Product</span>
-              </div>
-
-              {/* Existing Products */}
-              {products.map((p: any) => (
-                  <div 
-                     key={p.id} 
-                     onClick={() => openWizard(p)}
-                     className="relative border border-gray-200 rounded-lg aspect-square flex flex-col bg-white overflow-hidden cursor-pointer hover:shadow-md transition-shadow group"
-                  >
-                     <button 
-                        onClick={(e) => deleteProduct(p.id, e)}
-                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm z-10 w-7 h-7 flex items-center justify-center border border-gray-100 text-red-500 hover:bg-red-50"
-                     >
-                        <X className="w-4 h-4" />
-                     </button>
-                     
-                     <div className="h-1/2 bg-[#f0f2f5] w-full flex items-center justify-center relative">
-                        {p.imageUrl ? (
-                           <img src={p.imageUrl} className="max-w-full max-h-full object-contain mix-blend-multiply p-1" />
-                        ) : (
-                           <span className="text-gray-400 text-xs">No Image</span>
-                        )}
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Edit2 className="w-6 h-6 text-white" />
-                        </div>
-                     </div>
-                     <div className="p-2 flex flex-col flex-1 border-t border-gray-100">
-                         <span className="text-[12px] font-medium line-clamp-2 text-[#0f1111] mb-1">{p.title}</span>
-                         <span className="text-[14px] font-bold text-[#0f1111] mt-auto">£{p.price.toFixed(2)}</span>
-                     </div>
-                  </div>
-              ))}
-           </div>
-        </div>
-
-      </div>
+   </div>
 
       {/* Editor Modal */}
       {wizardOpen && (
