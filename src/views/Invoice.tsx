@@ -12,10 +12,16 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
   const formattedEstimatedDate = estimatedDeliveryDate ? estimatedDeliveryDate.toLocaleDateString('en-GB', { weekday: 'short', month: 'short', day: 'numeric' }) : 'Wed, May 3';
   const arrivingDay = estimatedDeliveryDate ? estimatedDeliveryDate.toLocaleDateString('en-GB', { weekday: 'long' }) : 'Wednesday';
 
+  const randomDeliveryTime = React.useMemo(() => {
+    const hours = Math.floor(Math.random() * 4) + 1; // 1 to 4 PM
+    const minutes = Math.floor(Math.random() * 60).toString().padStart(2, '0');
+    return `${hours}:${minutes} PM`;
+  }, []);
+
   return (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto">
       {/* App Header (simulating mobile mail client) */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white sticky top-0 z-10">
+      <div className="flex items-center justify-between px-4 pt-10 pb-3 border-b border-gray-100 bg-white sticky top-0 z-10">
          <div className="flex items-center gap-4">
             <ArrowLeft className="w-6 h-6 text-gray-700" onClick={onBack} />
          </div>
@@ -85,8 +91,7 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
 
             <div className="mt-4">
                 <h1 className="text-[32px] text-[#041e49] leading-tight font-normal">
-                    Expected by<br />
-                    {formattedEstimatedDate}
+                    {order?.status === 'DELIVERED' ? `Delivered today at ${randomDeliveryTime}` : `Expected by ${formattedEstimatedDate}`}
                 </h1>
             </div>
 

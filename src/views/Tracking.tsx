@@ -10,10 +10,16 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
   const estimatedDeliveryDate = order?.estimated_delivery_date ? new Date(order.estimated_delivery_date) : null;
   const formattedDeliveryDate = estimatedDeliveryDate ? estimatedDeliveryDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }) : 'tomorrow by\n10 PM';
 
+  const randomDeliveryTime = React.useMemo(() => {
+    const hours = Math.floor(Math.random() * 4) + 1; // 1 to 4 PM
+    const minutes = Math.floor(Math.random() * 60).toString().padStart(2, '0');
+    return `${hours}:${minutes} PM`;
+  }, []);
+
   return (
     <div className="flex flex-col h-full bg-[#EAEDED] z-50 absolute inset-0 overflow-y-auto pb-10">
       {/* Header Area */}
-      <div className="bg-gradient-to-b from-[#f5d58b] to-[#f0c14b] px-4 pt-12 pb-3 mb-2 flex items-center absolute top-0 w-full z-10 shadow-sm border-b border-[#cca73d]">
+      <div className="bg-gradient-to-b from-[#f5d58b] to-[#f0c14b] px-4 pt-16 pb-3 mb-2 flex items-center absolute top-0 w-full z-10 shadow-sm border-b border-[#cca73d]">
         <button onClick={onBack} className="mr-3 text-[#0f1111]">
           <ArrowLeft className="w-6 h-6" />
         </button>
@@ -26,11 +32,11 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
       </div>
 
       <div className="mt-[84px] w-full">
-          <div className="bg-white px-4 py-4 pt-6 mb-2 border-b border-gray-200 flex flex-col items-start gap-2">
+          <div className="bg-white px-4 py-4 pt-8 mb-2 border-b border-gray-200 flex flex-col items-start gap-2">
                <div className="flex justify-between items-start w-full">
-                   <h2 className="text-[22px] font-bold text-[#0f1111] leading-tight">
-                       {order?.status === 'PENDING' ? 'Processing' : `Arriving ${formattedDeliveryDate}`}
-                   </h2>
+                    <h2 className="text-[22px] font-bold text-[#0f1111] leading-tight">
+                        {order?.status === 'DELIVERED' ? `Delivered today at ${randomDeliveryTime}` : order?.status === 'PENDING' ? 'Processing' : `Arriving ${formattedDeliveryDate}`}
+                    </h2>
                    <span onClick={onBack} className="text-[#007185] font-medium text-[14px] cursor-pointer hover:underline">See all orders</span>
                </div>
                
