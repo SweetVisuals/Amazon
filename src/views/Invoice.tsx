@@ -5,7 +5,14 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
   const firstItem = order?.order_items?.[0] || { title: 'Order Confirmation' };
   const date = order?.created_at ? new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'May 1';
   const fullName = order?.delivery_address?.name || 'NICOLAS';
-  const orderNumber = order?.id?.slice(0, 8).toUpperCase() || '202-5371485-8987523';
+  const orderNumber = React.useMemo(() => {
+    // Return a random Amazon-style order ID: 3 digits - 7 digits - 7 digits
+    const p1 = Math.floor(Math.random() * 900) + 100;
+    const p2 = Math.floor(Math.random() * 9000000) + 1000000;
+    const p3 = Math.floor(Math.random() * 9000000) + 1000000;
+    return `${p1}-${p2}-${p3}`;
+  }, []);
+
   const totalAmount = order?.total_amount || 0;
   
   const estimatedDeliveryDate = order?.estimated_delivery_date ? new Date(order.estimated_delivery_date) : null;
@@ -91,7 +98,8 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
 
             <div className="mt-4">
                 <h1 className="text-[32px] text-[#041e49] leading-tight font-normal">
-                    {order?.status === 'DELIVERED' ? `Delivered today at ${randomDeliveryTime}` : `Expected by ${formattedEstimatedDate}`}
+                    Expected by<br />
+                    {formattedEstimatedDate}
                 </h1>
             </div>
 
@@ -193,7 +201,9 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
                <hr className="border-t border-gray-300 mb-6" />
 
                <div className="mb-6">
-                  <h3 className="text-[18px] font-bold text-gray-900">Arriving {arrivingDay}</h3>
+                  <h3 className="text-[18px] font-bold text-gray-900">
+                    {order?.status === 'DELIVERED' ? 'Delivered' : 'Arriving'} {arrivingDay}
+                  </h3>
                   <div className="text-[16px] font-bold text-gray-900 mt-1">{fullName.toUpperCase()}</div>
                   <div className="text-[15px] text-gray-900 mt-1">Order # {orderNumber}</div>
                </div>
