@@ -31,8 +31,8 @@ export const Tracking = ({ order, onBack, onViewOrderDetails }: { order?: any, o
         </div>
       </div>
 
-      <div className="mt-[84px] w-full">
-          <div className="bg-white px-4 py-4 pt-8 mb-2 border-b border-gray-200 flex flex-col items-start gap-2">
+      <div className="mt-[110px] w-full">
+          <div className="bg-white px-4 py-4 pt-12 mb-2 border-b border-gray-200 flex flex-col items-start gap-2">
                <div className="flex justify-between items-start w-full">
                     <h2 className="text-[22px] font-bold text-[#0f1111] leading-tight">
                         {order?.status === 'DELIVERED' ? `Delivered today at ${randomDeliveryTime}` : order?.status === 'PENDING' ? 'Processing' : `Arriving ${formattedDeliveryDate}`}

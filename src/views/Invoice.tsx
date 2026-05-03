@@ -21,7 +21,7 @@ export const Invoice = ({ order, onBack }: { order?: any, onBack: () => void }) 
   return (
     <div className="flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto">
       {/* App Header (simulating mobile mail client) */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-3 border-b border-gray-100 bg-white sticky top-0 z-10">
+      <div className="flex items-center justify-between px-4 pt-14 pb-4 border-b border-gray-100 bg-white sticky top-0 z-10">
          <div className="flex items-center gap-4">
             <ArrowLeft className="w-6 h-6 text-gray-700" onClick={onBack} />
          </div>
